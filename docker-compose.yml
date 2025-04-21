@@ -1,0 +1,21 @@
+services:
+  db_app:
+    image: postgres:16
+    container_name: db_app
+    command: -p 1221
+    expose:
+      - 1221
+    env_file:
+      - .env-non-dev
+
+  backend_app:
+    build:
+      context: .
+    env_file:
+      - .env-non-dev
+    container_name: backend_app
+    command: ["/app/docker/app.sh"]
+    ports:
+      - 8000:8000
+    depends_on:
+      - db_app
