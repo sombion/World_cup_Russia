@@ -1,0 +1,30 @@
+// Цветовая палитра
+$primary: #8a4fff;
+$primary-light: #b388ff;
+$primary-dark: #5e35b1;
+$text-dark: #2d2d48;
+$text-light: #f8f9fa;
+$error: #ff4d6d;
+
+// Градиенты
+$gradient-bg: linear-gradient(135deg, #f3e5ff 0%, #e1c4ff 100%);
+$gradient-card: linear-gradient(to bottom right, rgba(255,255,255,0.9), rgba(245,240,255,0.95));
+
+// Тени
+$shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+$shadow-md: 0 4px 16px rgba(0,0,0,0.15);
+
+// Размеры
+$radius: 12px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// Дополните существующие переменные:
+$button-primary: #8a4fff;
+$button-hover: #7b3aff;
+$button-active: #6a29ee;
+$button-text: white;
+$button-radius: 8px;
+$button-shadow: 0 2px 6px rgba(138, 79, 255, 0.3);
