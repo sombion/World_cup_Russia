@@ -18,7 +18,7 @@ class CommandInCompetitions(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     competitions_id: Mapped[int] = mapped_column(ForeignKey("competitions.id"))
     commands_id: Mapped[int] = mapped_column(ForeignKey("commands.id"))
-    place: Mapped[int]
-    points: Mapped[int]
+    place: Mapped[int] = mapped_column(nullable=True)
+    points: Mapped[int] = mapped_column(nullable=True)
     сomment: Mapped[str] = mapped_column(nullable=True)
     status: Mapped[CommandInCompetitionsStatus] = mapped_column(Enum(CommandInCompetitionsStatus, native_enum=False))

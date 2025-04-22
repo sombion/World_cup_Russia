@@ -6,15 +6,18 @@ class SUser(BaseModel):
     username: str
     login: str
     role: UserRole
+    age: int | None
 
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True
+    }
 
 class SUserRegister(BaseModel):
     username: str = Field(..., description="Имя")
     login: str = Field(..., description="Логин")
     password: str = Field(..., description="Пароль")
     role: UserRole = Field(..., description="Роль пользователя")
+    age: int | None = Field(..., ge=7, description="Возраст")
 
     class Config:
         use_enum_values = True

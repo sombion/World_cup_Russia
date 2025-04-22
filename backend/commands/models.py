@@ -16,5 +16,5 @@ class Commands(Base):
     name: Mapped[str]
     description: Mapped[str] = mapped_column(nullable=True)
     competitions_id: Mapped[int] = mapped_column(ForeignKey("competitions.id"))
-    captain: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    captain_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     status: Mapped[CommandStatus] = mapped_column(Enum(CommandStatus, native_enum=False))

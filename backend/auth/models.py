@@ -17,4 +17,5 @@ class Users(Base):
     username: Mapped[str]
     login: Mapped[str]
     hash_password: Mapped[str]
+    age: Mapped[int] = mapped_column(nullable=True)
     role: Mapped[UserRole] = mapped_column(Enum(UserRole, native_enum=False))

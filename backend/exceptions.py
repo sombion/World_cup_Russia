@@ -38,3 +38,4 @@ class IncorrectTokenFormatException(PCException):
 
 class UserIsNotPresentException(PCException):
     status_code=status.HTTP_401_UNAUTHORIZED
+    detail="Неверный пользователь"

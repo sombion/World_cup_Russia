@@ -14,6 +14,7 @@ class UsersDAO(BaseDAO):
         username: str,
         login: str,
         hash_password: str,
+        age: int | None,
         role: UserRole
     ):
         async with async_session_maker() as session:
@@ -21,6 +22,7 @@ class UsersDAO(BaseDAO):
                 username=username,
                 login=login,
                 hash_password=hash_password,
+                age=age,
                 role=role
             )
             await session.execute(stmt)
