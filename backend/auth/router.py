@@ -23,6 +23,7 @@ async def api_register_user(user_data: SUserRegister) -> dict:
         login=user_data.login,
         password=user_data.password,
         age=user_data.age,
+        region=user_data.region,
         role=user_data.role
     )
 

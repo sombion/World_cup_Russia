@@ -14,8 +14,7 @@ from backend.auth.models import Users
 from backend.command_in_competitions.models import CommandInCompetitions
 from backend.commands.models import Commands
 from backend.competitions.models import Competitions
-from backend.region.models import Region
-from backend.region_in_competitions.models import RegionInCompetitions
+from backend.region.models import Region, LimitationRegion, UsersRegion
 from backend.users_in_commands.models import UsersInCommands
 
 from backend.config import settings

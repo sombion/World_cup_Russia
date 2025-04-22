@@ -10,6 +10,7 @@ async def register_user(
     login: str,
     password: str,
     age: int | None,
+    region: str | None,
     role: UserRole
 ):
     user = await UsersDAO.find_one_or_none(login=login)
@@ -23,6 +24,7 @@ async def register_user(
         age=age,
         role=role
     )
+    # Добавление пользователя в регион
     return {'detail': 'Вы успешно зарегистрированы!'}
 
 async def login_user(login: str, password: str):
