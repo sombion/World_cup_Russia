@@ -1,0 +1,73 @@
+@import '../../../styles/vars';
+@import '../../../styles/mixins';
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  width: 100%;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  label {
+    font-weight: 500;
+    color: $text-dark;
+    font-size: 0.9rem;
+  }
+}
+
+.input {
+  @include input-style;
+  padding: $spacing-md;
+  font-size: 1rem;
+
+  &::placeholder {
+    color: rgba($text-dark, 0.4);
+  }
+}
+
+.error {
+  color: $error;
+  font-size: 0.8rem;
+  margin-top: 2px;
+  min-height: 1.2rem;
+}
+
+.submitButton {
+  margin-top: $spacing-md;
+}
+
+.loginButton {
+  background: $button-primary;
+  color: $button-text;
+  padding: 12px 24px;
+  border-radius: $button-radius;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.3s ease;
+  box-shadow: $button-shadow;
+  margin-top: $spacing-md;
+
+  &:hover {
+    background: $button-hover;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(138, 79, 255, 0.4);
+  }
+
+  &:active {
+    background: $button-active;
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background: #d3b9ff;
+    cursor: not-allowed;
+  }
+}

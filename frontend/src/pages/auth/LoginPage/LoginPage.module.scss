@@ -1,0 +1,76 @@
+@import '../../../styles/vars';
+@import '../../../styles/mixins';
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: $spacing-md;
+
+  @include mobile {
+    padding: $spacing-sm;
+    align-items: flex-start;
+  }
+}
+
+.card {
+  @include card;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.title {
+  color: $primary-dark;
+  margin-bottom: $spacing-xl;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  text-align: left;
+  margin-bottom: $spacing-lg;
+}
+
+.label {
+  font-weight: 500;
+  color: $text-dark;
+}
+
+.input {
+  @include input-style;
+}
+
+.button {
+  background: $primary;
+  color: white;
+  padding: $spacing-md;
+  border-radius: $radius;
+  font-weight: 600;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: $primary-dark;
+  }
+}
+
+.footer {
+  margin-top: $spacing-xl;
+  color: $text-dark;
+
+  a {
+    color: $primary;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

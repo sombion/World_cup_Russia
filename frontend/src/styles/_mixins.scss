@@ -1,0 +1,37 @@
+@import './vars';
+
+@mixin mobile {
+  @media (max-width: 576px) {
+    @content;
+  }
+}
+
+@mixin card {
+  background: $gradient-card;
+  backdrop-filter: blur(8px);
+  border-radius: $radius;
+  box-shadow: $shadow-md;
+  padding: $spacing-xl;
+}
+
+@mixin button-mobile {
+  @include mobile {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+@mixin input-style {
+  width: 100%;
+  padding: $spacing-md;
+  border-radius: $radius;
+  background: rgba(255,255,255,0.8);
+  border: 1px solid rgba($primary, 0.2);
+  transition: all 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 2px rgba($primary, 0.2);
+  }
+}
