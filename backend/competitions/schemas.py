@@ -12,6 +12,7 @@ class SCompetitions(BaseModel):
     date_to_start: datetime = Field(...)
     description: str = Field(...)
     max_count_users: int = Field(...)
+    min_age_users: int = Field(...)
     is_published: bool | None = Field(...)
 
     class Config:
@@ -24,6 +25,8 @@ class SCreateCompetitions(BaseModel):
     date_to_start: datetime = Field(...)
     description: str = Field(...)
     max_count_users: int = Field(...)
+    min_age_users: int = Field(...)
+    region_list: list | None = Field(...)
     is_published: bool | None = Field(...)
 
 class SPublishedCompetitions(BaseModel):

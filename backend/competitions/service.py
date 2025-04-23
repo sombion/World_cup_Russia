@@ -2,6 +2,7 @@ from datetime import datetime
 
 from backend.competitions.dao import CompetitionsDAO
 from backend.competitions.models import Competitions, CompetitionsDiscipline, CompetitionsType
+from backend.region.dao import LimitationRegionDAO
 
 
 async def create_competitions(
@@ -11,7 +12,9 @@ async def create_competitions(
     date_to_start: datetime,
     description: str,
     max_count_users: int,
+    min_age_users: int,
     creator_id: int,
+    region_list: list | None,
     is_published: bool | None
 ):
     competition_data = await CompetitionsDAO.add(
@@ -21,9 +24,17 @@ async def create_competitions(
         date_to_start = date_to_start,
         description = description,
         max_count_users = max_count_users,
+        min_age_users = min_age_users,
         creator_id = creator_id,
         is_published = is_published
     )
+    if not competition_data.id:
+        raise {"detail": "Ошибка создания соревнования"}
+    if type == CompetitionsType.REGIONAL:
+        for region in region_list:
+            await LimitationRegionDAO.add(competitions_id=competition_data.id)
+
+
     return {
         "detail": "Соревнование успешно создано",
         "competition_data": competition_data

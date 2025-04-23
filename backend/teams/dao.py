@@ -1,11 +1,11 @@
 from sqlalchemy import insert, select, update
-from backend.commands.models import CommandStatus, Commands
+from backend.teams.models import TeamStatus, Teams
 from backend.dao.base import BaseDAO
 from backend.database import async_session_maker
 
 
-class CommandsDAO(BaseDAO):
-    model = Commands
+class TeamsDAO(BaseDAO):
+    model = Teams
 
 
     # @classmethod

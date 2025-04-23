@@ -4,16 +4,16 @@ from sqlalchemy.orm import Mapped, mapped_column
 from backend.database import Base
 
 
-class UsersInCommandsStatus(str, enum.Enum):
+class UsersInTeamsStatus(str, enum.Enum):
     INVITED = "Приглашен"
     WAITING_LEADER = "Ожидание лидера"
     MEMBER = "Участник"
     DECLINED = "Отклонена"
 
-class UsersInCommands(Base):
-    __tablename__ = "users_in_commands"
+class UsersInTeams(Base):
+    __tablename__ = "users_in_teams"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    command_id: Mapped[int] = mapped_column(ForeignKey("commands.id"))
-    status: Mapped[UsersInCommandsStatus] = mapped_column(Enum(UsersInCommandsStatus, native_enum=False))
+    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"))
+    status: Mapped[UsersInTeamsStatus] = mapped_column(Enum(UsersInTeamsStatus, native_enum=False))

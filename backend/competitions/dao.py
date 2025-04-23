@@ -19,6 +19,7 @@ class CompetitionsDAO(BaseDAO):
         date_to_start: datetime,
         description: str,
         max_count_users: int,
+        min_age_users: int,
         creator_id: int,
         is_published: bool | None
     ):
@@ -30,6 +31,7 @@ class CompetitionsDAO(BaseDAO):
                 date_to_start = date_to_start,
                 description = description,
                 max_count_users = max_count_users,
+                min_age_users = min_age_users,
                 creator_id = creator_id,
                 is_published = is_published
             ).returning(cls.model.id, cls.model.title)

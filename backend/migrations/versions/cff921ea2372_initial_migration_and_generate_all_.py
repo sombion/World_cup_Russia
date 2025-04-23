@@ -1,8 +1,8 @@
-"""Create all system
+"""Initial migration and generate all system
 
-Revision ID: bb40123e4b89
-Revises: 9839dca38892
-Create Date: 2025-04-23 00:35:35.397647
+Revision ID: cff921ea2372
+Revises: 
+Create Date: 2025-04-23 11:50:52.057770
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'bb40123e4b89'
-down_revision: Union[str, None] = '9839dca38892'
+revision: str = 'cff921ea2372'
+down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -24,6 +24,15 @@ def upgrade() -> None:
     op.create_table('region',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('region_name', sa.String(), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('users',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('username', sa.String(), nullable=False),
+    sa.Column('login', sa.String(), nullable=False),
+    sa.Column('hash_password', sa.String(), nullable=False),
+    sa.Column('age', sa.Integer(), nullable=True),
+    sa.Column('role', sa.Enum('FEDERATION', 'REGIONAL_REP', 'ATHLETE', name='userrole', native_enum=False), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('competitions',
@@ -49,17 +58,6 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('commands',
-    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('name', sa.String(), nullable=False),
-    sa.Column('description', sa.String(), nullable=True),
-    sa.Column('competitions_id', sa.Integer(), nullable=False),
-    sa.Column('captain_id', sa.Integer(), nullable=False),
-    sa.Column('status', sa.Enum('FILLED', 'NEED_PLAYERS', name='commandstatus', native_enum=False), nullable=False),
-    sa.ForeignKeyConstraint(['captain_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['competitions_id'], ['competitions.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
     op.create_table('limitation_region',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('competitions_id', sa.Integer(), nullable=False),
@@ -68,24 +66,37 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['region_id'], ['region.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('command_in_competitions',
+    op.create_table('teams',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
+    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('competitions_id', sa.Integer(), nullable=False),
+    sa.Column('captain_id', sa.Integer(), nullable=False),
+    sa.Column('pepresentative_id', sa.Integer(), nullable=True),
+    sa.Column('status', sa.Enum('FILLED', 'NEED_PLAYERS', name='teamstatus', native_enum=False), nullable=False),
+    sa.ForeignKeyConstraint(['captain_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['competitions_id'], ['competitions.id'], ),
+    sa.ForeignKeyConstraint(['pepresentative_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('team_request',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('competitions_id', sa.Integer(), nullable=False),
-    sa.Column('commands_id', sa.Integer(), nullable=False),
+    sa.Column('teams_id', sa.Integer(), nullable=False),
     sa.Column('place', sa.Integer(), nullable=True),
     sa.Column('points', sa.Integer(), nullable=True),
     sa.Column('сomment', sa.String(), nullable=True),
-    sa.Column('status', sa.Enum('ON_MODERATION', 'REJECTED', 'FORMING', 'APPROVED', 'COMPLETED', name='commandincompetitionsstatus', native_enum=False), nullable=False),
-    sa.ForeignKeyConstraint(['commands_id'], ['commands.id'], ),
+    sa.Column('status', sa.Enum('ON_MODERATION', 'REJECTED', 'FORMING', 'APPROVED', 'COMPLETED', name='teamrequeststatus', native_enum=False), nullable=False),
     sa.ForeignKeyConstraint(['competitions_id'], ['competitions.id'], ),
+    sa.ForeignKeyConstraint(['teams_id'], ['teams.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('users_in_commands',
+    op.create_table('users_in_teams',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('command_id', sa.Integer(), nullable=False),
-    sa.Column('status', sa.Enum('INVITED', 'WAITING_LEADER', 'MEMBER', 'DECLINED', name='usersincommandsstatus', native_enum=False), nullable=False),
-    sa.ForeignKeyConstraint(['command_id'], ['commands.id'], ),
+    sa.Column('team_id', sa.Integer(), nullable=False),
+    sa.Column('status', sa.Enum('INVITED', 'WAITING_LEADER', 'MEMBER', 'DECLINED', name='usersinteamsstatus', native_enum=False), nullable=False),
+    sa.ForeignKeyConstraint(['team_id'], ['teams.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -95,11 +106,12 @@ def upgrade() -> None:
 def downgrade() -> None:
     """Downgrade schema."""
     # ### commands auto generated by Alembic - please adjust! ###
-    op.drop_table('users_in_commands')
-    op.drop_table('command_in_competitions')
+    op.drop_table('users_in_teams')
+    op.drop_table('team_request')
+    op.drop_table('teams')
     op.drop_table('limitation_region')
-    op.drop_table('commands')
     op.drop_table('user_region')
     op.drop_table('competitions')
+    op.drop_table('users')
     op.drop_table('region')
     # ### end Alembic commands ###
