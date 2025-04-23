@@ -22,13 +22,11 @@ async def api_detail_competitions(competitions_id: int):
 async def api_all_competitions():
     ...
 
-# !
 @router.get("/find-my-published")
 async def api_filter_my_published(current_user: Users = Depends(get_current_user)):
     competition_data = await CompetitionsDAO.find_all(creator_id=current_user.id, is_published=True)
     return {"data": competition_data}
 
-# !
 @router.get("/find-my-not-published")
 async def api_filter_my_not_published(current_user: Users = Depends(get_current_user)):
     competition_data = await CompetitionsDAO.find_all(creator_id=current_user.id, is_published=False)
@@ -53,5 +51,5 @@ async def api_create_competitions(
     )
 
 @router.post("/published")
-async def api_published_competitions(competitions_data: SPublishedCompetitions, current_user: Users = Depends(get_current_federation_user)):
+async def api_published_competitions(competitions_data: SPublishedCompetitions, current_user: Users = Depends(get_current_user)):
     return await published(competitions_data.competitions_id, user_id=current_user.id)
