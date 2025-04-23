@@ -1,15 +1,14 @@
-from sqlalchemy import func, insert, select, union, update
+from sqlalchemy import case, func, insert, select, union, update
 from sqlalchemy.orm import aliased
 from backend.auth.models import Users
 from backend.teams.models import TeamStatus, Teams
 from backend.dao.base import BaseDAO
 from backend.database import async_session_maker
-from backend.users_in_teams.models import UsersInTeams
+from backend.users_in_teams.models import UsersInTeams, UsersInTeamsStatus
 
 
 class TeamsDAO(BaseDAO):
     model = Teams
-
 
     @classmethod
     async def add(
@@ -41,15 +40,19 @@ class TeamsDAO(BaseDAO):
     @classmethod
     async def detail(cls, team_id: int):
         async with async_session_maker() as session:
-
             captain = aliased(Users)
-
+            status_case = case(
+                (UsersInTeams.status == 'INVITED', 'Приглашен'),
+                (UsersInTeams.status == 'WAITING_LEADER', 'Ожидание лидера'),
+                (UsersInTeams.status == 'MEMBER', 'Участник'),
+                (UsersInTeams.status == 'DECLINED', 'Отклонена'),
+            )
             user_info = func.json_build_object(
                 'user_id', UsersInTeams.user_id,
                 'login', Users.login,
                 'username', Users.username,
+                'status', status_case
             )
-
             query = (
                 select(
                     cls.model.__table__.columns,

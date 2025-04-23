@@ -37,6 +37,7 @@ async def api_team_detail(team_id: int):
 
 @router.post("/accept-users")
 async def api_accept_user(accept_data: SAcceptUsers, current_user: Users = Depends(get_current_user)):
+    
     # Встепление в команду по приглашению users_in_teams_id и current_user.id
     ...
 
