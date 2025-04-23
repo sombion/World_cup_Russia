@@ -2,17 +2,6 @@ from pydantic import BaseModel, Field
 
 from backend.auth.models import UserRole
 
-class SUser(BaseModel):
-    username: str
-    login: str
-    role: UserRole
-    age: int | None
-    region_name: str | None
-
-    model_config = {
-        "from_attributes": True
-    }
-
 class SUserRegister(BaseModel):
     username: str = Field(..., description="Имя")
     login: str = Field(..., description="Логин")

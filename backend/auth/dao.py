@@ -48,4 +48,4 @@ class UsersDAO(BaseDAO):
                 .where(cls.model.id==user_id)
             )
             result = await session.execute(query)
-            return result.mappings().all()
+            return result.first()._mapping

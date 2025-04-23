@@ -1,9 +1,8 @@
-from typing import Optional
 from fastapi import APIRouter, Depends, Response
 from backend.auth.dao import UsersDAO
 from backend.auth.dependencies import get_current_user
 from backend.auth.models import Users
-from backend.auth.schemas import SUser, SUserAuth, SUserRegister
+from backend.auth.schemas import SUserAuth, SUserRegister
 from backend.auth.service import login_user, register_user, statistics_user
 
 
@@ -14,8 +13,7 @@ router = APIRouter(
 
 
 @router.get("/me")
-# @router.get("/me", response_model=Optional[SUser])
-async def api_get_me(current_user: Users = Depends(get_current_user)):
+async def api_get_me(current_user: Users = Depends(get_current_user)) -> dict:
     return await UsersDAO.detail_user(current_user.id)
 
 @router.post("/register")

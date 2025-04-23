@@ -74,4 +74,4 @@ class TeamsDAO(BaseDAO):
                 .group_by(cls.model.id, captain.login, captain.username)
             )
             result = await session.execute(query)
-            return result.mappings().all()
+            return result.first()._mapping
