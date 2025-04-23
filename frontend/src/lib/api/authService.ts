@@ -2,10 +2,13 @@ import api from 'axios'
 import { AuthResponse, LoginData, RegisterData, User } from '../types/auth';
 
 export const register = async (data: RegisterData): Promise<AuthResponse> => {
+    console.log('Отправка данных регистрации: ', data)
     const response = await api.post('/api/auth/register', data, {
         withCredentials: true
     });
+    console.log('Ответ сервера: ', response.data);
     return response.data;
+
 };
 
 export const login = async (data: LoginData): Promise<AuthResponse> => {
