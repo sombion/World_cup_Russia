@@ -49,5 +49,5 @@ async def api_create_competitions(
     )
 
 @router.post("/published")
-async def api_published_competitions(competitions_data: SPublishedCompetitions):
-    return await published(competitions_data.competitions_id)
+async def api_published_competitions(competitions_data: SPublishedCompetitions, current_user: Users = Depends(get_current_federation_user)):
+    return await published(competitions_data.competitions_id, user_id=current_user.id)

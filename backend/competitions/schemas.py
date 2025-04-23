@@ -15,7 +15,7 @@ class SCompetitions(BaseModel):
     is_published: bool | None = Field(...)
 
     class Config:
-        orm_mode = True
+        use_enum_values = True
 
 class SCreateCompetitions(BaseModel):
     title: str = Field(...)

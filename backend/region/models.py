@@ -15,8 +15,8 @@ class LimitationRegion(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     competitions_id: Mapped[int] = mapped_column(ForeignKey("competitions.id"))
-    region_id: Mapped[int] = mapped_column(ForeignKey("region.id"))
 
+    region_id: Mapped[int] = mapped_column(ForeignKey("region.id"))
 
 class UsersRegion(Base):
     __tablename__ = "user_region"

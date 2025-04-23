@@ -3,7 +3,7 @@ from backend.auth.dao import UsersDAO
 from backend.auth.dependencies import get_current_user
 from backend.auth.models import Users
 from backend.auth.schemas import SUser, SUserAuth, SUserRegister
-from backend.auth.service import login_user, register_user
+from backend.auth.service import login_user, register_user, statistics_user
 
 
 router = APIRouter(
@@ -23,7 +23,7 @@ async def api_register_user(user_data: SUserRegister) -> dict:
         login=user_data.login,
         password=user_data.password,
         age=user_data.age,
-        region=user_data.region,
+        region_id=user_data.region_id,
         role=user_data.role
     )
 
@@ -39,3 +39,7 @@ async def api_auth_user(response: Response, user_data: SUserAuth) -> dict:
 async def api_logout_user(response: Response) -> dict:
     response.delete_cookie(key="pc_access_token")
     return {'detail': 'Пользователь успешно вышел из системы'}
+
+@router.get("/statistics")
+async def api_statistics_user(current_user: Users = Depends(get_current_user)):
+    await statistics_user(user_data=current_user)

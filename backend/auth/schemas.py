@@ -17,7 +17,7 @@ class SUserRegister(BaseModel):
     login: str = Field(..., description="Логин")
     password: str = Field(..., description="Пароль")
     role: UserRole = Field(..., description="Роль пользователя")
-    region: str | None = Field(...)
+    region_id: int | None = Field(...)
     age: int | None = Field(..., ge=7, description="Возраст")
 
     class Config:

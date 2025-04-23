@@ -29,8 +29,10 @@ async def create_competitions(
         "competition_data": competition_data
     }
 
-async def published(competitions_id: int):
+async def published(competitions_id: int, user_id: int):
     competitions_data: Competitions = await CompetitionsDAO.find_by_id()
+    if competitions_data.creator_id != user_id:
+        raise {"detail": "Вы не являетесь организатором"}
     if competitions_data.is_published == True:
         raise {"detail": "Соревнование уже опубликовано"}
     await CompetitionsDAO.published(id=competitions_id)

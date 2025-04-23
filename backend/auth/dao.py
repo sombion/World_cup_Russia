@@ -24,7 +24,7 @@ class UsersDAO(BaseDAO):
                 hash_password=hash_password,
                 age=age,
                 role=role
-            )
+            ).returning(cls.model.id)
             await session.execute(stmt)
             await session.commit()
 
