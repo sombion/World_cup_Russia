@@ -1,18 +1,21 @@
 from fastapi import APIRouter, Depends
 
 from backend.auth.dependencies import get_current_user
-from backend.auth.models import Users
+from backend.auth.models import UserRole, Users
+from backend.teams.dao import TeamsDAO
 from backend.teams.schemas import SAcceptToCaptain, SAcceptUsers, SCreateTeam, SInviteUsers, SSendModeretor
 from backend.teams.service import create_team
 
 
 router = APIRouter(
-    prefix="/team",
+    prefix="/api/team",
     tags=["API комманды"]
 )
 
 @router.post("/create")
 async def api_create_command(team_data: SCreateTeam, current_user: Users = Depends(get_current_user)):
+    if current_user.role == UserRole.FEDERATION:
+        raise {"detail": "Федерация не может создавать команду"}
     captain_id = current_user.id
     pepresentative_id = None
     if team_data.captain_id:
@@ -30,8 +33,7 @@ async def api_create_command(team_data: SCreateTeam, current_user: Users = Depen
 
 @router.get("/detail/{team_id}")
 async def api_team_detail(team_id: int):
-    # Ответ {Описание команды, имя капитана и список всех участников}
-    ...
+    return await TeamsDAO.detail(team_id=team_id)
 
 @router.post("/accept-users")
 async def api_accept_user(accept_data: SAcceptUsers, current_user: Users = Depends(get_current_user)):
@@ -58,7 +60,7 @@ async def api_reject_captain_to_users(accept_data: SAcceptToCaptain, current_use
     # Отклонение заявки в команду (Удаление записи в бд) по accept_data.users_in_teams_id и current_user.id
     ...
 
-@router.post("/")
+@router.post("/edit-status")
 async def api_( current_user: Users = Depends(get_current_user)):
     # Изменение статуса команда на сформированная
     ...

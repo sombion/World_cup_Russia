@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.auth.router import router as auth_router
 from backend.region.router import router as region_router
 from backend.competitions.router import router as competitions_router
+from backend.teams.router import router as teams_router
 
 
 app = FastAPI()
@@ -12,6 +13,7 @@ app = FastAPI()
 app.include_router(auth_router)
 app.include_router(region_router)
 app.include_router(competitions_router)
+app.include_router(teams_router)
 
 origins = [
     "http://localhost:5500",

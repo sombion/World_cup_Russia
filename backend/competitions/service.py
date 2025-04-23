@@ -14,10 +14,10 @@ async def create_competitions(
     max_count_users: int,
     min_age_users: int,
     creator_id: int,
-    region_list: list | None,
+    region_id_list: list | None,
     is_published: bool | None
 ):
-    competition_data = await CompetitionsDAO.add(
+    competition_id = await CompetitionsDAO.add(
         title = title,
         type = type,
         discipline = discipline,
@@ -28,16 +28,14 @@ async def create_competitions(
         creator_id = creator_id,
         is_published = is_published
     )
-    if not competition_data.id:
+    if not competition_id:
         raise {"detail": "Ошибка создания соревнования"}
     if type == CompetitionsType.REGIONAL:
-        for region in region_list:
-            await LimitationRegionDAO.add(competitions_id=competition_data.id)
-
-
+        for region in region_id_list:
+            await LimitationRegionDAO.add(competitions_id=competition_id)
     return {
         "detail": "Соревнование успешно создано",
-        "competition_data": competition_data
+        "competition_data": competition_id
     }
 
 async def published(competitions_id: int, user_id: int):

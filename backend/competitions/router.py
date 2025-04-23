@@ -8,7 +8,7 @@ from backend.competitions.service import create_competitions, published
 
 
 router = APIRouter(
-    prefix="/competitions",
+    prefix="/api/competitions",
     tags=["API работы с соревнованиями"]
 )
 
@@ -45,7 +45,7 @@ async def api_create_competitions(
         description = competitions_data.description,
         max_count_users = competitions_data.max_count_users,
         min_age_users = competitions_data.min_age_users,
-        region_list = competitions_data.region_list,
+        region_id_list = competitions_data.region_id_list,
         creator_id = current_user.id,
         is_published = competitions_data.is_published,
     )

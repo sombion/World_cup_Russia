@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlalchemy import insert, select, update
-from backend.command_in_competitions.models import CommandInCompetitions
+from backend.team_request.models import TeamRequest
 from backend.competitions.models import Competitions, CompetitionsDiscipline, CompetitionsType
 from backend.dao.base import BaseDAO
 from backend.database import async_session_maker
@@ -34,7 +34,7 @@ class CompetitionsDAO(BaseDAO):
                 min_age_users = min_age_users,
                 creator_id = creator_id,
                 is_published = is_published
-            ).returning(cls.model.id, cls.model.title)
+            ).returning(cls.model.id)
             result = await session.execute(stmt)
             await session.commit()
             return result.scalar()
@@ -52,8 +52,8 @@ class CompetitionsDAO(BaseDAO):
             query = (
                 select(cls.model)
                 .join(
-                    CommandInCompetitions,
-                    cls.model.id==CommandInCompetitions.competitions_id
+                    TeamRequest,
+                    cls.model.id==TeamRequest.competitions_id
                 )
                 .where(cls.model.id==id)
             )

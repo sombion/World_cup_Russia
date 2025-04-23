@@ -6,7 +6,7 @@ from backend.region.service import create_region
 
 
 router = APIRouter(
-    prefix="/region",
+    prefix="/api/region",
     tags=["API работы с регионами"]
 )
 

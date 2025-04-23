@@ -26,7 +26,7 @@ class SCreateCompetitions(BaseModel):
     description: str = Field(...)
     max_count_users: int = Field(...)
     min_age_users: int = Field(...)
-    region_list: list | None = Field(...)
+    region_id_list: list[int] | None = Field(...)
     is_published: bool | None = Field(...)
 
 class SPublishedCompetitions(BaseModel):

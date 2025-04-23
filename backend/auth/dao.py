@@ -25,6 +25,6 @@ class UsersDAO(BaseDAO):
                 age=age,
                 role=role
             ).returning(cls.model.id)
-            await session.execute(stmt)
+            result = await session.execute(stmt)
             await session.commit()
-
+            return result.scalar()
