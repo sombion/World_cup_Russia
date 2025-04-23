@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 from backend.auth.dependencies import get_current_user
 from backend.auth.models import Users
-from backend.teams.schemas import SCreateTeam, SInviteUsers, SSendModeretor
+from backend.teams.schemas import SAcceptToCaptain, SAcceptUsers, SCreateTeam, SInviteUsers, SSendModeretor
 from backend.teams.service import create_team
 
 
@@ -33,10 +33,47 @@ async def api_team_detail(team_id: int):
     # Ответ {Описание команды, имя капитана и список всех участников}
     ...
 
-@router.post("/invite-user")
-async def api_invite_user(invite_data: SInviteUsers):
+@router.post("/accept-users")
+async def api_accept_user(accept_data: SAcceptUsers, current_user: Users = Depends(get_current_user)):
+    # Встепление в команду по приглашению users_in_teams_id и current_user.id
+    ...
+
+@router.post("/accept-users")
+async def api_accept_user(accept_data: SAcceptUsers, current_user: Users = Depends(get_current_user)):
+    # Встепление в команду по приглашению accept_data.users_in_teams_id и current_user.id
+    ...
+
+@router.post("/invite-to-captain")
+async def api_invite_user(invite_data: SInviteUsers, current_user: Users = Depends(get_current_user)):
+    # Вступление в команду invite_data.team_id и current_user.id
+    ...
+
+@router.post("/accept-captain-to-users")
+async def api_accept_captain_to_user(accept_data: SAcceptToCaptain, current_user: Users = Depends(get_current_user)):
+    # Принятие участника в команду accept_data.users_in_teams_id и current_user.id
+    ...
+
+@router.post("/reject-captain-to-users")
+async def api_reject_captain_to_users(accept_data: SAcceptToCaptain, current_user: Users = Depends(get_current_user)):
+    # Отклонение заявки в команду (Удаление записи в бд) по accept_data.users_in_teams_id и current_user.id
+    ...
+
+@router.post("/")
+async def api_( current_user: Users = Depends(get_current_user)):
+    # Изменение статуса команда на сформированная
     ...
 
 @router.post("/send-team-request")
 async def api_send_team_request(send_data: SSendModeretor):
+    # Отправка заявки на модерацию соревнования
     ...
+
+# Список команд со статусом NEED_PLAYERS = "Требуются спортсмены"
+# Список для спортсмена со всеми приглашениями в команду
+# Список для капитана команды с users_in_teams со статусом "Ожидание капитана"
+
+'''
+На фронте
+Если в детализации команды есть статус на модерации (True/False)
+То пропадают кнопки со всеми возможными действиями в данной команде
+'''

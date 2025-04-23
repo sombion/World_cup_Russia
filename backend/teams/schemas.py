@@ -12,12 +12,14 @@ class SCreateTeam(BaseModel):
     status: TeamStatus = Field(...)
 
 class SInviteUsers(BaseModel):
-    user_id: int = Field(...)
     team_id: int = Field(...)
+    comment: str = Field(...)
+
+class SAcceptToCaptain(BaseModel):
+    users_in_teams_id: int = Field(...)
 
 class SAcceptUsers(BaseModel):
-    user_id: int = Field(...)
-    team_id: int = Field(...)
+    users_in_teams_id: int = Field(...)
 
 class SSendModeretor(BaseModel):
     competitions_id: int = Field(...)
