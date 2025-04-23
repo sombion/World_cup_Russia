@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from backend.auth.dependencies import get_current_federation_user
+from backend.auth.dependencies import get_current_federation_user, get_current_user
 from backend.auth.models import Users
 from backend.competitions.dao import CompetitionsDAO
 from backend.competitions.schemas import SCreateCompetitions, SPublishedCompetitions
@@ -22,20 +22,22 @@ async def api_detail_competitions(competitions_id: int):
 async def api_all_competitions():
     ...
 
+# !
 @router.get("/find-my-published")
-async def api_filter_my_published(current_user: Users = Depends(get_current_federation_user)):
+async def api_filter_my_published(current_user: Users = Depends(get_current_user)):
     competition_data = await CompetitionsDAO.find_all(creator_id=current_user.id, is_published=True)
     return {"data": competition_data}
 
+# !
 @router.get("/find-my-not-published")
-async def api_filter_my_not_published(current_user: Users = Depends(get_current_federation_user)):
+async def api_filter_my_not_published(current_user: Users = Depends(get_current_user)):
     competition_data = await CompetitionsDAO.find_all(creator_id=current_user.id, is_published=False)
     return {"data": competition_data}
 
 @router.post("/create")
 async def api_create_competitions(
         competitions_data: SCreateCompetitions,
-        current_user: Users = Depends(get_current_federation_user)
+        current_user: Users = Depends(get_current_user)
     ):
     return await create_competitions(
         title = competitions_data.title,
