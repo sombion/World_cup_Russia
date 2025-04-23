@@ -50,11 +50,8 @@ class CompetitionsDAO(BaseDAO):
     async def detail(cls, id: int):
         async with async_session_maker() as session:
             query = (
-                select(cls.model)
-                .join(
-                    TeamRequest,
-                    cls.model.id==TeamRequest.competitions_id
-                )
+                select(cls.model.__table__.columns, TeamRequest)
+                .outerjoin(TeamRequest, cls.model.id==TeamRequest.competitions_id)
                 .where(cls.model.id==id)
             )
             result = await session.execute(query)

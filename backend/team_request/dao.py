@@ -20,6 +20,5 @@ class TeamRequestDAO(BaseDAO):
                 teams_id = teams_id,
                 status = TeamRequestStatus.ON_MODERATION
             )
-            result = await session.execute(stmt)
+            await session.execute(stmt)
             await session.commit()
-            return result.scalar()

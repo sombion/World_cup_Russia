@@ -15,8 +15,7 @@ router = APIRouter(
 
 @router.get("/detail/{competitions_id}")
 async def api_detail_competitions(competitions_id: int):
-    # return await CompetitionsDAO.
-    ...
+    return await CompetitionsDAO.detail(competitions_id)
 
 @router.get("/all")
 async def api_all_competitions():
