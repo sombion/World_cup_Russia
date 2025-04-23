@@ -8,6 +8,7 @@ class SCreateTeam(BaseModel):
     description: str | None = Field(...)
     competitions_id: str = Field(...)
     users_id_list: list | None = Field(...)
+    captain_id: int | None = Field(...)
     status: TeamStatus = Field(...)
 
 class SInviteUsers(BaseModel):
