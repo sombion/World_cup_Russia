@@ -1,9 +1,8 @@
-import { Formik, Form, Field, ErrorMessage, useFormikContext } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { RegisterData, UserRole } from '../../../lib/types/auth';
 import * as Yup from 'yup';
 import { useAuth } from '../../../lib/hooks/useAuth';
 import styles from './RegisterForm.module.scss';
-import { useEffect } from 'react';
 
 const roleOptions = [
   { value: 'Спортсмены', label: 'Спортсмены' },
@@ -42,17 +41,6 @@ const RegisterSchema = Yup.object().shape({
 });
 
 const RegisterForm = () => {
-  const {values, setFieldValue} = useFormikContext<{
-    role: string;
-    age: number | null;
-  }>();
-
-  useEffect(()=>{
-    if (values.role !== 'Спортсмены'){
-      setFieldValue('age', null);
-    }
-  }, [values.role, setFieldValue]);
-
   const { handleRegister } = useAuth();
 
   return (
@@ -62,8 +50,8 @@ const RegisterForm = () => {
         login: '',
         password: '',
         confirmPassword: '',
-        role: 'Спортсмены' as UserRole,
-        age: null as number | null
+        role: 'Спортсмены',
+        age: undefined
       }}
       validationSchema={RegisterSchema}
       onSubmit={async (values, { setSubmitting, setErrors }) => {
@@ -148,28 +136,27 @@ const RegisterForm = () => {
               className={styles.select}
             >
               {roleOptions.map((option) => (
-                <option key={option.value} value={option.value as UserRole}>
+                <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
               ))}
             </Field>
-            <ErrorMessage name="role" component="div" className={styles.error} />
           </div>
 
           {values.role === 'Спортсмены' && (
-            <div className={`${styles.field} ${styles.ageField}`}>
-              <label htmlFor="age" className={styles.label}>
-                Возраст *
-              </label>
-              <Field
-                name="age"
-                type="number"
-                min="10"
-                max="99"
-                className={styles.input}
-              />
-              <ErrorMessage name="age" component="div" className={styles.error} />
-            </div>
+            <div className={values.role === 'Спортсмены' ? styles.field : styles.hidden}>
+            <label htmlFor="age" className={styles.label}>
+              Возраст *
+            </label>
+            <Field
+              name="age"
+              type="number"
+              min="10"
+              max="99"
+              className={styles.input}
+            />
+            <ErrorMessage name="age" component="div" className={styles.error} />
+          </div>
           )}
 
           <button
@@ -184,5 +171,4 @@ const RegisterForm = () => {
     </Formik>
   );
 };
-
 export default RegisterForm;

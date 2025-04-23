@@ -48,9 +48,9 @@
                     role: data.role,
                     ...(data.role === 'Спортсмены' && {age: data.age})
                 });
-                if (!response?.user){
-                    throw new Error('Регистрация не пройдена - нет информации о пользователе')
-                }
+                // if (!response?.user){
+                //     throw new Error('Регистрация не пройдена - нет информации о пользователе')
+                // }
                 setUser(response.user);
                 navigate('/');
             } catch (error) {
