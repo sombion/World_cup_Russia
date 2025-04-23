@@ -7,6 +7,7 @@ class SUser(BaseModel):
     login: str
     role: UserRole
     age: int | None
+    region_name: str | None
 
     model_config = {
         "from_attributes": True
