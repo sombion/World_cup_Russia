@@ -10,10 +10,6 @@ class UsersInTeamsStatus(str, enum.Enum):
     MEMBER = "Участник"
     DECLINED = "Отклонена"
 
-    @classmethod
-    def display(cls, value):
-        return cls[value].value if value in cls.__members__ else value
-
 class UsersInTeams(Base):
     __tablename__ = "users_in_teams"
 

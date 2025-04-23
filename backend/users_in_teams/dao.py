@@ -1,7 +1,7 @@
-from sqlalchemy import and_, insert, select, update
+from sqlalchemy import and_, delete, insert, select, update
 from backend.dao.base import BaseDAO
 from backend.database import async_session_maker
-from backend.teams.models import TeamStatus, Teams
+from backend.teams.models import Teams
 from backend.users_in_teams.models import UsersInTeams, UsersInTeamsStatus
 
 class UserInTeamDAO(BaseDAO):
@@ -36,6 +36,33 @@ class UserInTeamDAO(BaseDAO):
                 comment = comment,
                 status = status
             )
+            result = await session.execute(stmt)
+            await session.commit()
+            return result.scalar()
+
+    @classmethod
+    async def edit_status_and_comment(
+        cls,
+        users_in_teams_id: int,
+        status: UsersInTeamsStatus,
+        comment: str | None
+    ):
+        async with async_session_maker() as session:
+            stmt = (
+                update(cls.model)
+                .where(cls.model.id==users_in_teams_id)
+                .values(
+                    status=status,
+                    comment=comment
+                )
+            )
+            await session.execute(stmt)
+            await session.commit()
+
+    @classmethod
+    async def delete(cls, users_in_teams_id: int):
+        async with async_session_maker() as session:
+            stmt = delete(cls.model).where(cls.model.id==users_in_teams_id)
             result = await session.execute(stmt)
             await session.commit()
             return result.scalar()

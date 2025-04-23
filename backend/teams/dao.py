@@ -38,6 +38,13 @@ class TeamsDAO(BaseDAO):
             return result.scalar()
 
     @classmethod
+    async def edit_status(cls, team_id: int, status: TeamStatus):
+        async with async_session_maker() as session:
+            stmt = update(cls.model).where(cls.model.id==team_id).values(status=status)
+            await session.execute(stmt)
+            await session.commit()
+
+    @classmethod
     async def detail(cls, team_id: int):
         async with async_session_maker() as session:
             captain = aliased(Users)
