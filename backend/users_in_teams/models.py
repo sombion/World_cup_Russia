@@ -16,4 +16,5 @@ class UsersInTeams(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"))
+    comment: Mapped[str] = mapped_column(nullable=True)
     status: Mapped[UsersInTeamsStatus] = mapped_column(Enum(UsersInTeamsStatus, native_enum=False))
