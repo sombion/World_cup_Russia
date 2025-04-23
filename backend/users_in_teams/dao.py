@@ -1,4 +1,5 @@
-from sqlalchemy import and_, delete, insert, select, update
+from sqlalchemy import and_, delete, func, insert, select, update
+from backend.auth.models import Users
 from backend.dao.base import BaseDAO
 from backend.database import async_session_maker
 from backend.teams.models import Teams
@@ -20,6 +21,18 @@ class UserInTeamDAO(BaseDAO):
             )
             result = await session.execute(query)
             return result.mappings().all()
+
+    @classmethod
+    async def list_age_user(cls, team_id: int):
+        async with async_session_maker() as session:
+            query = (
+                select(func.min(Users.age))
+                .select_from(cls.model)
+                .join(Users, cls.model.user_id==Users.id)
+                .where(cls.model.team_id==team_id)
+            )
+            result = await session.execute(query)
+            return result.scalar()
 
     @classmethod
     async def add(

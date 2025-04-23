@@ -1,4 +1,6 @@
 from backend.team_request.dao import TeamRequestDAO
+from backend.team_request.models import TeamRequestStatus
+from backend.team_request.service import send_team_request
 from backend.teams.dao import TeamsDAO
 from backend.teams.models import TeamStatus
 from backend.users_in_teams.dao import UserInTeamDAO
@@ -44,6 +46,8 @@ async def create_team(
             comment=None,
             status=UsersInTeamsStatus.INVITED
         )
+    if status == TeamStatus.NEED_PLAYERS:
+        await send_team_request(team_id=team_id, status=TeamRequestStatus.FORMING)
     return {"detail": "Команда успешно создана"}
 
 async def edit_status(team_id: int, user_id: int):
@@ -51,4 +55,9 @@ async def edit_status(team_id: int, user_id: int):
     if team_data.status == TeamStatus.FILLED:
         raise {"detail": "Невозможно изменить статус"}
     await TeamsDAO.edit_status(team_id=team_id, status=TeamStatus.FILLED)
+    await TeamRequestDAO.edit_status(
+        competitions_id=team_data.competitions_id,
+        teams_id=team_id,
+        status=TeamRequestStatus.APPROVED
+    )
     return {"detail": "Статус команда успешно изменен"}
