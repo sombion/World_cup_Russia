@@ -2,6 +2,8 @@
     import { useNavigate } from "react-router-dom";
     import { register, login, logout, getMe } from "../api/authService";
     import { User, RegisterData, LoginData } from "../types/auth";
+    import { CompetitionFormData } from "../types/competitions";
+import axios from "axios";
 
     export const useAuth = () => {
         const [user, setUser] = useState<User | null>(null);
@@ -40,28 +42,46 @@
 
         const handleRegister = async (data: RegisterData) => {
             try {
-                setIsLoading(true);
-                const response = await register({
-                    username: data.username,
-                    login: data.login,
-                    password: data.password,
-                    role: data.role,
-                    ...(data.role === 'Спортсмены' && {age: data.age})
-                });
-                // if (!response?.user){
-                //     throw new Error('Регистрация не пройдена - нет информации о пользователе')
-                // }
-                setUser(response.user);
-                navigate('/');
+              setIsLoading(true);
+              const response = await register({
+                username: data.username,
+                login: data.login,
+                password: data.password,
+                role: data.role,
+                age: data.role === 'Спортсмены' ? data.age : null, // Всегда отправляем age, но null для не-спортсменов
+                region_id: data.role === 'Всероссийская Федерация спортивного программирования' ? null : data.region_id
+                
+            });
+              
+              setUser(response.user);
+              navigate('/');
             } catch (error) {
-                setError('Ошибка регистрации');
+              setError('Ошибка регистрации');
+              throw error;
+            } finally {
+              setIsLoading(false);
+            }
+          };
+
+          const createCompetition = async (data: CompetitionFormData) => {
+            try{
+                setIsLoading(true);
+                const response = await axios.post('api/competitions/create', {
+                    ...data,
+                    date_to_start: new Date(data.date_to_start).toISOString()
+                });
+                return response.data;
+            } catch (error) {
+                if (axios.isAxiosError(error)){
+                    throw new Error(error.response?.data?.message || 'Ошибка создания соревнования');
+                }
                 throw error;
             } finally {
                 setIsLoading(false);
             }
-        };
-
-        const handleLogin = async (data: LoginData) => {
+          };
+        
+          const handleLogin = async (data: LoginData) => {
             try {
                 setIsLoading(true);
                 const response = await login(data);
@@ -89,5 +109,5 @@
             }
         };
 
-        return { user, isLoading, error, handleRegister, handleLogin, handleLogout };
+        return { user, isLoading, error, handleRegister, handleLogin, handleLogout, createCompetition };
     };

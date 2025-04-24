@@ -1,0 +1,18 @@
+.select {
+    &[multiple] {
+      min-height: 120px;
+      option {
+        padding: 8px;
+        &:checked {
+          background-color: #f0f0f0;
+        }
+      }
+    }
+  }
+  
+  .hint {
+    display: block;
+    margin-top: 4px;
+    color: #666;
+    font-size: 0.8rem;
+  }
