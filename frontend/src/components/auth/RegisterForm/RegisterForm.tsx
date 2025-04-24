@@ -1,8 +1,10 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { RegisterData, UserRole } from '../../../lib/types/auth';
+import { RegisterData, UserRole, Region } from '../../../lib/types/auth';
 import * as Yup from 'yup';
 import { useAuth } from '../../../lib/hooks/useAuth';
 import styles from './RegisterForm.module.scss';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const roleOptions = [
   { value: 'Спортсмены', label: 'Спортсмены' },
@@ -36,12 +38,69 @@ const RegisterSchema = Yup.object().shape({
         .required('Укажите возраст')
         .min(10, 'Минимальный возраст - 10 лет')
         .integer('Введите целое число'),
-      otherwise: (schema) => schema.nullable().notRequired()
-    })
+      otherwise: (schema) => schema.nullable()
+    }),
+    region_id: Yup.number()
+  .when('role', {
+    is: 'Региональные представители',
+    then: schema => schema
+      .required('Выберите регион')
+      .typeError('Выберите регион'),
+    otherwise: schema => schema.nullable()
+  })
 });
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const RegionSelect = ({ regions, role, field, form }: any) => {
+  if (role === 'Всероссийская Федерация спортивного программирования') {
+    return null;
+  }
+
+  return (
+    <div className={styles.field}>
+      <label htmlFor="region_id" className={styles.label}>
+        Регион
+      </label>
+      <select
+        {...field}
+        className={styles.select}
+        onChange={(e) => {
+          const value = e.target.value ? Number(e.target.value) : null;
+          form.setFieldValue(field.name, value);
+        }}
+        value={field.value || ''}
+      >
+        <option value="">Выберите регион</option>
+        {regions.map((region: Region) => (
+          <option key={region.id} value={region.id}>
+            {region.region_name}
+          </option>
+        ))}
+      </select>
+      <ErrorMessage name="region_id" component="div" className={styles.error} />
+    </div>
+  );
+};
 
 const RegisterForm = () => {
   const { handleRegister } = useAuth();
+  const [regions, setRegions] = useState<Region[]>([]);
+  const [loadingRegions, setLoadingRegions] = useState(false);
+
+  useEffect(() => {
+    const fetchRegions = async () => {
+      setLoadingRegions(true);
+      try {
+        const response = await axios.get<{ regions: Region[] }>('/api/region/all');
+        setRegions(response.data.regions);
+      } catch (error) {
+        console.error('Ошибка загрузки регионов:', error);
+      } finally {
+        setLoadingRegions(false);
+      }
+    };
+    fetchRegions();
+  }, []);
 
   return (
     <Formik
@@ -50,8 +109,9 @@ const RegisterForm = () => {
         login: '',
         password: '',
         confirmPassword: '',
-        role: 'Спортсмены',
-        age: undefined
+        role: 'Спортсмены' as UserRole,
+        age: null,
+        region_id: null
       }}
       validationSchema={RegisterSchema}
       onSubmit={async (values, { setSubmitting, setErrors }) => {
@@ -60,8 +120,11 @@ const RegisterForm = () => {
             username: values.username,
             login: values.login,
             password: values.password,
-            role: values.role as UserRole,
-            ...(values.role === 'Спортсмены' && { age: values.age })
+            role: values.role,
+            ...(values.role === 'Спортсмены' && { age: values.age }),
+            region_id: values.role === 'Всероссийская Федерация спортивного программирования' 
+              ? null
+              : values.region_id
           };
           await handleRegister(registerData);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -69,7 +132,8 @@ const RegisterForm = () => {
           setErrors({
             login: 'Ошибка регистрации',
             password: 'Ошибка регистрации',
-            ...(values.role === 'Спортсмены' && { age: 'Ошибка в возрасте' })
+            ...(values.role === 'Спортсмены' && { age: 'Ошибка в возрасте' }),
+            ...(values.role === 'Региональные представители' && { region_id: 'Ошибка в выборе региона' })
           });
         } finally {
           setSubmitting(false);
@@ -157,6 +221,14 @@ const RegisterForm = () => {
             />
             <ErrorMessage name="age" component="div" className={styles.error} />
           </div>
+          )}
+          {values.role !== 'Всероссийская Федерация спортивного программирования' && !loadingRegions && regions.length > 0 && (
+            <Field
+              name="region_id"
+              component={RegionSelect}
+              regions={regions}
+              role={values.role}
+            />
           )}
 
           <button
