@@ -16,3 +16,10 @@ class SUserRegister(BaseModel):
 class SUserAuth(BaseModel):
     login: str = Field(..., description="Логин")
     password: str = Field(..., description="Пароль")
+
+class SEdinUsername(BaseModel):
+    username: str = Field(..., description="Новое имя")
+
+class SEditPassword(BaseModel):
+    last_password: str = Field(..., description="Старый пароль")
+    new_password: str = Field(..., description="Новый пароль")

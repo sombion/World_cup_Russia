@@ -2,7 +2,7 @@ from backend.auth.models import UserRole
 from backend.dao.base import BaseDAO
 from backend.auth.models import Users
 from backend.database import async_session_maker
-from sqlalchemy import insert, select, or_
+from sqlalchemy import insert, select, or_, update
 
 from backend.region.models import Region, UsersRegion
 from backend.team_request.models import TeamRequest, TeamRequestStatus
@@ -75,3 +75,9 @@ class UsersDAO(BaseDAO):
             result = await session.execute(query)
             return result.mappings().all()
 
+    @classmethod
+    async def update(cls, user_id: int, **filter):
+        async with async_session_maker() as session:
+            stmt = update(cls.model).where(cls.model.id==user_id).values(**filter)
+            await session.execute(stmt)
+            await session.commit()

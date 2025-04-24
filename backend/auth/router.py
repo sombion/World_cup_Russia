@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, Response
 from backend.auth.dao import UsersDAO
 from backend.auth.dependencies import get_current_user
 from backend.auth.models import Users
-from backend.auth.schemas import SUserAuth, SUserRegister
-from backend.auth.service import login_user, register_user
+from backend.auth.schemas import SEdinUsername, SEditPassword, SUserAuth, SUserRegister
+from backend.auth.service import edit_password, login_user, register_user
 from backend.team_request.models import TeamRequestStatus
 
 
@@ -48,3 +48,16 @@ async def api_complited_competitions(current_user: Users = Depends(get_current_u
 @router.get("/now-competitions", description="Текущие соревнования")
 async def api_now_competitions(current_user: Users = Depends(get_current_user)):
     return await UsersDAO.competitions_to_request(user_id=current_user.id, status=TeamRequestStatus.APPROVED)
+
+@router.patch("/edit-username", description="Изменение имени")
+async def api_edit_username(user_new_data: SEdinUsername, current_user: Users = Depends(get_current_user)):
+    await UsersDAO.update(user_id=current_user.id, username=user_new_data.username)
+    return {"detail": "Имя пользователя испешно изменено"}
+
+@router.patch("/edit-password", description="Изменение пароля")
+async def api_edit_username(user_data: SEditPassword, current_user: Users = Depends(get_current_user)):
+    return await edit_password(
+        last_password=user_data.last_password,
+        new_password=user_data.new_password,
+        user_id=current_user.id
+    )
