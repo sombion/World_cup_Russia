@@ -9,6 +9,7 @@ services:
       - 443:443
     links:
       - db_app
+      
   db_app:
     image: postgres:16
     container_name: db_app
