@@ -37,6 +37,18 @@
 - **Summary:** Api Now Competitions
 - **Описание:** Текущие соревнования
 
+### PATCH /api/auth/edit-username
+- **Теги:** Авторизация
+- **Summary:** Api Edit Username
+- **Описание:** Изменение имени
+- **Тело запроса:** Требуется объект, соответствующий схеме `SEdinUsername`
+
+### PATCH /api/auth/edit-password
+- **Теги:** Авторизация
+- **Summary:** Api Edit Username
+- **Описание:** Изменение пароля
+- **Тело запроса:** Требуется объект, соответствующий схеме `SEditPassword`
+
 ## 2. API работы с регионами
 
 ### GET /api/region/all
