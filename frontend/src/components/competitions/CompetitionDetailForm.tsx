@@ -17,7 +17,6 @@ const CompetitionDetailForm: React.FC<CompetitionDetailFormProps> = ({ competiti
     };
 
   const regions = competition.region || [];
-  const hasRegions = regions.length > 0;
 
   return (
     <div className={styles.competitionInfo}>
@@ -50,11 +49,11 @@ const CompetitionDetailForm: React.FC<CompetitionDetailFormProps> = ({ competiti
         <p>Минимальный возраст участников: {competition.min_age_users || 'Не указано'}</p>
       </div>
 
-      {hasRegions && (
+      {regions.length > 0 &&  (
         <div className={styles.competitionRegions}>
           <h3>Регионы:</h3>
           <ul>
-            {competition.region.map((region, index) => (
+            {regions.map((region, index) => (
               <li key={index}>{region.region_name || 'Не указан'}</li>
             ))}
           </ul>
