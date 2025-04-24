@@ -1,4 +1,39 @@
-# World_cup_Russia
+# World cup Russia 25
+
+# Инструкция к запуску проекта
+1) Создайте файл `.env` и заполнить его в соответствии с шаблоном
+```
+DB_HOST=
+DB_PORT=
+DB_USER=
+DB_PASS=
+DB_NAME=
+
+SECRET_KEY=lZ/hfmj5lRkMdLyeO9aWFzqwU8L2neTs3Q0N/Xk4oGE=
+ALGORITHM=HS256
+```
+2) Создайте файл `.env-non-dev`
+```
+DB_HOST=db_app
+DB_PORT=1221
+DB_USER=
+DB_PASS=
+DB_NAME=
+
+SECRET_KEY=lZ/hfmj5lRkMdLyeO9aWFzqwU8L2neTs3Q0N/Xk4oGE=
+ALGORITHM=HS256
+
+POSTGRES_DB=
+POSTGRES_USER=
+POSTGRES_PASSWORD=1569
+```
+3) Запустить команды
+```
+docker compose build
+docker compose up
+```
+
+
 # Документация API
 
 Этот документ описывает доступные API-эндпоинты проекта согласно спецификации OpenAPI.
