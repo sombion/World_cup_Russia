@@ -1,4 +1,14 @@
 services:
+  nginx:
+    build:
+      context: .
+      dockerfile: "Dockerfile.nginx"
+    container_name: app_nginx
+    ports:
+      - 80:80
+      - 443:443
+    links:
+      - db_app
   db_app:
     image: postgres:16
     container_name: db_app
