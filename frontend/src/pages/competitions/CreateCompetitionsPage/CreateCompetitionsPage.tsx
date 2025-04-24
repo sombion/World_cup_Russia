@@ -9,7 +9,7 @@ const CreateCompetitionPage =() => {
                 <h1 className={styles.title}>Создание соревнования</h1>
                 <CreateCompetitionForm/>
                 <div className={styles.footer}>
-                    <Link to="/competitions" className={styles.link}>
+                    <Link to="/competitions/all" className={styles.link}>
                     Вернуться к списку соревнований
                     </Link>
                 </div>
