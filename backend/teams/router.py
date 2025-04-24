@@ -6,7 +6,7 @@ from backend.exceptions import FederationCannotCreateTeamException
 from backend.team_request.models import TeamRequest
 from backend.teams.dao import TeamsDAO
 from backend.teams.schemas import SCreateTeam, SEditStatus
-from backend.teams.service import create_team, edit_status
+from backend.teams.service import create_team, detail_team, edit_status
 
 
 router = APIRouter(
@@ -35,7 +35,7 @@ async def api_create_command(team_data: SCreateTeam, current_user: Users = Depen
 
 @router.get("/detail/{team_id}", description="Детализация команды по id")
 async def api_team_detail(team_id: int):
-    return await TeamsDAO.detail(team_id=team_id)
+    return await detail_team(team_id=team_id)
 
 @router.post("/edit-status", description="Изменение статуса заявки команды c Требуются спортсмены на Заполнена")
 async def api_edit_status(edit_data: SEditStatus, current_user: Users = Depends(get_current_user)):

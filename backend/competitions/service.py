@@ -2,7 +2,7 @@ from datetime import datetime
 
 from backend.competitions.dao import CompetitionsDAO
 from backend.competitions.models import Competitions, CompetitionsDiscipline, CompetitionsType
-from backend.exceptions import CompetitionAlreadyPublishedException, CompetitionCreationError, NotAnOrganizerException
+from backend.exceptions import CompetitionAlreadyPublishedException, CompetitionCreationError, CompetitionNotFoundError, NotAnOrganizerException
 from backend.region.dao import LimitationRegionDAO, UsersRegionDAO
 
 
@@ -51,3 +51,8 @@ async def published(competitions_id: int, user_id: int):
         raise CompetitionAlreadyPublishedException
     await CompetitionsDAO.published(id=competitions_id)
     return {"detail": "Соревнование успешно опубликовано"}
+
+async def detail_competitions(competitions_id: int):
+    if not await CompetitionsDAO.find_by_id(model_id=competitions_id):
+        raise CompetitionNotFoundError
+    return await CompetitionsDAO.detail(id=competitions_id)

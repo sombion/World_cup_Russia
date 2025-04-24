@@ -7,7 +7,7 @@ from backend.auth.models import Users
 from backend.competitions.dao import CompetitionsDAO
 from backend.competitions.models import CompetitionsDiscipline, CompetitionsType
 from backend.competitions.schemas import SCreateCompetitions, SPublishedCompetitions
-from backend.competitions.service import create_competitions, published
+from backend.competitions.service import create_competitions, detail_competitions, published
 
 
 router = APIRouter(
@@ -18,7 +18,7 @@ router = APIRouter(
 
 @router.get("/detail/{competitions_id}", description="Информация о соревновании")
 async def api_detail_competitions(competitions_id: int):
-    return await CompetitionsDAO.detail(competitions_id)
+    return await detail_competitions(competitions_id=competitions_id)
 
 @router.get("/all", description="Все соревнования")
 async def api_all_competitions():

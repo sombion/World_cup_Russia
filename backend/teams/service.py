@@ -1,4 +1,4 @@
-from backend.exceptions import AlreadyRegisteredAsCaptainException, ParticipantsAlreadyInCompetitionException, TeamCreationError, TeamStatusChangeError
+from backend.exceptions import AlreadyRegisteredAsCaptainException, ParticipantsAlreadyInCompetitionException, TeamCreationError, TeamNotFoundError, TeamStatusChangeError
 from backend.team_request.dao import TeamRequestDAO
 from backend.team_request.models import TeamRequestStatus
 from backend.team_request.service import send_team_request
@@ -62,3 +62,8 @@ async def edit_status(team_id: int, user_id: int):
         status=TeamRequestStatus.ON_MODERATION
     )
     return {"detail": "Статус команда успешно изменен"}
+
+async def detail_team(team_id: int):
+    if not await TeamsDAO.find_by_id(model_id=team_id):
+        raise TeamNotFoundError
+    return await TeamsDAO.detail(team_id=team_id)

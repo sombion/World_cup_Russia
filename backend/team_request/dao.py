@@ -2,6 +2,7 @@ from sqlalchemy import insert, select, update
 from backend.competitions.models import Competitions
 from backend.dao.base import BaseDAO
 from backend.database import async_session_maker
+from backend.region.models import LimitationRegion
 from backend.team_request.models import TeamRequest, TeamRequestStatus
 from backend.teams.models import Teams
 
@@ -74,7 +75,6 @@ class TeamRequestDAO(BaseDAO):
             )
             await session.execute(stmt)
             await session.commit()
-
 
     @classmethod
     async def moderation_team_list(cls, user_id):
