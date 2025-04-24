@@ -58,6 +58,6 @@ async def edit_status(team_id: int, user_id: int):
     await TeamRequestDAO.edit_status(
         competitions_id=team_data.competitions_id,
         teams_id=team_id,
-        status=TeamRequestStatus.APPROVED
+        status=TeamRequestStatus.ON_MODERATION
     )
     return {"detail": "Статус команда успешно изменен"}

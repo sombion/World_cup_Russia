@@ -1,4 +1,4 @@
-from sqlalchemy import case, func, insert, select, union, update
+from sqlalchemy import and_, case, func, insert, or_, select, union, update
 from sqlalchemy.orm import aliased
 from backend.auth.models import Users
 from backend.region.models import UsersRegion
@@ -91,5 +91,57 @@ class TeamsDAO(BaseDAO):
             region_query = select(UsersRegion.region_id).where(UsersRegion.user_id.in_(user_ids))
             region_result = await session.execute(region_query)
             region_ids = [row.region_id for row in region_result.fetchall()]
-
             return region_ids
+
+    @classmethod
+    async def my_team(cls, user_id):
+        async with async_session_maker() as session:
+            query = (
+                select(cls.model.name, cls.model.description)
+                .select_from(cls.model)
+                .outerjoin(UsersInTeams, cls.model.id==UsersInTeams.team_id)
+                .where(
+                    or_(
+                        cls.model.captain_id==user_id,
+                        and_(
+                            UsersInTeams.user_id==user_id,
+                            UsersInTeams.status==UsersInTeamsStatus.MEMBER
+                        )
+                    )
+                )
+            )
+            result = await session.execute(query)
+            return result.mappings().all()
+
+    @classmethod
+    async def need_players(cls, competition_id: int):
+        async with async_session_maker() as session:
+            query = (
+                select(cls.model.name, cls.model.description)
+                .select_from(cls.model)
+                .outerjoin(UsersInTeams, cls.model.id==UsersInTeams.team_id)
+                .where(
+                    cls.model.competitions_id==competition_id,
+                    cls.model.status==TeamStatus.NEED_PLAYERS
+                )
+                .group_by(cls.model.name, cls.model.description)
+            )
+            result = await session.execute(query)
+            return result.mappings().all()
+
+    @classmethod
+    async def applications_to_captain(cls, captain_id: int, team_id: int):
+        async with async_session_maker() as session:
+            query = (
+                select(Users.username, Users.login, UsersInTeams.comment, UsersInTeams.status)
+                .select_from(cls.model)
+                .outerjoin(UsersInTeams, cls.model.id==UsersInTeams.team_id)
+                .outerjoin(Users, UsersInTeams.user_id==Users.id)
+                .where(
+                    cls.model.captain_id==captain_id,
+                    UsersInTeams.team_id==team_id,
+                    UsersInTeams.status==UsersInTeamsStatus.WAITING_LEADER
+                )
+            )
+            result = await session.execute(query)
+            return result.mappings().all()

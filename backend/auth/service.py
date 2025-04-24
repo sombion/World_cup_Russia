@@ -33,14 +33,3 @@ async def login_user(login: str, password: str):
     user = await authenticate_user(login=login, password=password)
     access_token = create_access_token({"sub": str(user.id)})
     return {'access_token': access_token, 'detail': 'Вы успешно вошли!'}
-
-async def statistics_user(user_data: Users):
-    if user_data.role == UserRole.FEDERATION:
-        # Статистика федерации
-        ...
-    if user_data.role == UserRole.REGIONAL_REP:
-        # Статистика региона
-        ...
-    if user_data.role == UserRole.ATHLETE:
-        # Статистика федерации
-        ...

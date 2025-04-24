@@ -10,13 +10,13 @@ router = APIRouter(
     tags=["API работы с регионами"]
 )
 
-@router.get("/all")
+@router.get("/all", description="Список всех регионов")
 async def api_all_region():
     return {
         "detail": "Список регионов успешно загружен",
         "regions": await RegionDAO.find_all()
     }
 
-@router.post("/add")
+@router.post("/add", description="Создание региона")
 async def api_add_region(region_data: SCreaetRegion):
     return await create_region(region_name=region_data.region_name)

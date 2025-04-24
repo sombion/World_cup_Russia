@@ -1,5 +1,6 @@
 from sqlalchemy import and_, delete, func, insert, select, update
 from backend.auth.models import Users
+from backend.competitions.models import Competitions
 from backend.dao.base import BaseDAO
 from backend.database import async_session_maker
 from backend.teams.models import Teams
@@ -79,3 +80,28 @@ class UserInTeamDAO(BaseDAO):
             result = await session.execute(stmt)
             await session.commit()
             return result.scalar()
+
+    @classmethod
+    async def invite_in_team(cls, user_id: int):
+        async with async_session_maker() as session:
+            query = (
+                select(cls.model.id, Teams.name, Teams.description)
+                .select_from(cls.model)
+                .join(Teams, cls.model.team_id==Teams.id)
+                .where(cls.model.user_id==user_id, cls.model.status==UsersInTeamsStatus.INVITED)
+            )
+            result = await session.execute(query)
+            return result.mappings().all()
+
+
+    @classmethod
+    async def invite_in_captain(cls, user_id: int):
+        async with async_session_maker() as session:
+            query = (
+                select(Teams.id, Teams.name, Teams.description)
+                .select_from(cls.model)
+                .join(Teams, cls.model.team_id==Teams.id)
+                .where(cls.model.user_id==user_id, cls.model.status==UsersInTeamsStatus.WAITING_LEADER)
+            )
+            result = await session.execute(query)
+            return result.mappings().all()

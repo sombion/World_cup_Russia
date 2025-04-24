@@ -16,15 +16,15 @@ router = APIRouter(
 )
 
 
-@router.get("/detail/{competitions_id}")
+@router.get("/detail/{competitions_id}", description="Информация о соревновании")
 async def api_detail_competitions(competitions_id: int):
     return await CompetitionsDAO.detail(competitions_id)
 
-@router.get("/all")
+@router.get("/all", description="Все соревнования")
 async def api_all_competitions():
     return await CompetitionsDAO.find_all()
 
-@router.get("/filter")
+@router.get("/filter", description="Фильтр соревнований")
 async def api_filter_competitions(
     date_start: Optional[date] = Query(None, description="Дата начала"),
     type: Optional[CompetitionsType] = Query(None, description="Тип соревнования"),
@@ -38,17 +38,17 @@ async def api_filter_competitions(
         region_id=region_id
     )
 
-@router.get("/find-my-published")
+@router.get("/find-my-published", description="Опубликованные соревнования")
 async def api_filter_my_published(current_user: Users = Depends(get_current_user)):
     competition_data = await CompetitionsDAO.find_all(creator_id=current_user.id, is_published=True)
     return {"data": competition_data}
 
-@router.get("/find-my-not-published")
+@router.get("/find-my-not-published", description="Не опубликованные соревнования")
 async def api_filter_my_not_published(current_user: Users = Depends(get_current_user)):
     competition_data = await CompetitionsDAO.find_all(creator_id=current_user.id, is_published=False)
     return {"data": competition_data}
 
-@router.post("/create")
+@router.post("/create", description="Создание соревнований")
 async def api_create_competitions(
         competitions_data: SCreateCompetitions,
         current_user: Users = Depends(get_current_user)
@@ -66,6 +66,6 @@ async def api_create_competitions(
         is_published = competitions_data.is_published,
     )
 
-@router.post("/published")
+@router.post("/published", description="Публикация соревнования")
 async def api_published_competitions(competitions_data: SPublishedCompetitions, current_user: Users = Depends(get_current_user)):
     return await published(competitions_data.competitions_id, user_id=current_user.id)

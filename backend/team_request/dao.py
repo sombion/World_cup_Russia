@@ -1,4 +1,5 @@
 from sqlalchemy import insert, select, update
+from backend.competitions.models import Competitions
 from backend.dao.base import BaseDAO
 from backend.database import async_session_maker
 from backend.team_request.models import TeamRequest, TeamRequestStatus
@@ -59,9 +60,8 @@ class TeamRequestDAO(BaseDAO):
                 points=points,
                 status=TeamRequestStatus.COMPLETED
             )
-            result = await session.execute(stmt)
+            await session.execute(stmt)
             await session.commit()
-            return result.scalar()
 
     @classmethod
     async def edit_status(cls, competitions_id: int, teams_id: int, status: TeamRequestStatus):
@@ -75,4 +75,16 @@ class TeamRequestDAO(BaseDAO):
             await session.execute(stmt)
             await session.commit()
 
-    
+
+    @classmethod
+    async def moderation_team_list(cls, user_id):
+        async with async_session_maker() as session:
+            query = (
+                select(cls.model.id, Teams.name)
+                .select_from(cls.model)
+                .outerjoin(Teams, cls.model.teams_id==Teams.id)
+                .outerjoin(Competitions, Competitions.id==Teams.competitions_id)
+                .where(Competitions.creator_id==user_id, cls.model.status==TeamRequestStatus.ON_MODERATION)
+            )
+            result = await session.execute(query)
+            return result.mappings().all()

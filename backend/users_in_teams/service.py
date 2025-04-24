@@ -7,7 +7,7 @@ from backend.users_in_teams.models import UsersInTeamsStatus
 
 async def check_users_in_teams(users_in_teams_id: int, user_id: int, status: UsersInTeamsStatus):
     user_in_team_data = await UserInTeamDAO.find_one_or_none(
-        users_in_teams_id = users_in_teams_id,
+        id = users_in_teams_id,
         user_id = user_id
     )
     if not user_in_team_data:
@@ -23,6 +23,7 @@ async def accept_user(users_in_teams_id: int, user_id: int):
         status=UsersInTeamsStatus.MEMBER,
         comment=None
     )
+    return {"detail": "Заявка успешно принята"}
 
 async def invite_to_captain(team_id: int, comment: str | None, user_id: int):
     # Вступление в команду invite_data.team_id invite_data.comment и current_user.id

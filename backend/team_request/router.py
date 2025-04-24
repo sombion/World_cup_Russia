@@ -13,7 +13,7 @@ router = APIRouter(
     tags=["API заявок с соревнованиями"]
 )
 
-@router.post("/send-moderator")
+@router.post("/send-moderator", description="Отправка заявки команды на модерацию")
 async def api_send_team_request(send_data: SSendModeretor):
     return await send_team_request(
         send_data.team_id,
@@ -21,19 +21,23 @@ async def api_send_team_request(send_data: SSendModeretor):
         status=TeamRequestStatus.APPROVED
     )
 
-@router.get("/competitions/{competitions_id}")
+@router.get("/competitions/{competitions_id}", description="Список заявок для определенного соревнования")
 async def request_competitions(competitions_id: int):
     return await TeamRequestDAO.find_competitions_request(competitions_id)
 
-@router.get("/moderation/competitions/{competitions_id}")
+@router.get("/moderation/competitions/{competitions_id}", description="Список заявок отправленных на модерацию")
 async def request_competitions(competitions_id: int):
     return await TeamRequestDAO.find_competitions_request_status(competitions_id, TeamRequestStatus.ON_MODERATION)
 
-@router.get("/approved/competitions/{competitions_id}")
+@router.get("/approved/competitions/{competitions_id}", description="Список подтвержденных заявок")
 async def request_competitions(competitions_id: int):
     return await TeamRequestDAO.find_competitions_request_status(competitions_id, TeamRequestStatus.APPROVED)
 
-@router.post("/moderation/accept-team-request")
+@router.get("/modetation-team-list", description="Список команд требующих модерации")
+async def api_moderation_team_list(current_user: Users = Depends(get_current_user)):
+    return await TeamRequestDAO.moderation_team_list(current_user.id)
+
+@router.post("/moderation/accept-team-request", description="Подтверждение заявки во время модерации")
 async def accept(moderation_data: SModerationCompetitions):
     await TeamRequestDAO.edit_status(
         competitions_id=moderation_data.competitions_id,
@@ -41,7 +45,7 @@ async def accept(moderation_data: SModerationCompetitions):
         status=TeamRequestStatus.APPROVED
     )
 
-@router.post("/moderation/reject-team-request")
+@router.post("/moderation/reject-team-request", description="Отклонение заявки во время модерации")
 async def reject(moderation_data: SModerationCompetitions):
     await TeamRequestDAO.edit_status(
         competitions_id=moderation_data.competitions_id,
@@ -49,7 +53,7 @@ async def reject(moderation_data: SModerationCompetitions):
         status=TeamRequestStatus.REJECTED
     )
 
-@router.post("/end-competition")
+@router.post("/end-competition", description="Выставление результатов для команды")
 async def api_end_competition(end_data: SEndCompetition, current_user: Users = Depends(get_current_user)):
     await TeamRequestDAO.end_competition(
         team_request_id=end_data.team_request_id,

@@ -13,7 +13,7 @@ router = APIRouter(
     tags=["API комманды"]
 )
 
-@router.post("/create")
+@router.post("/create", description="Создание команды")
 async def api_create_command(team_data: SCreateTeam, current_user: Users = Depends(get_current_user)):
     if current_user.role == UserRole.FEDERATION:
         raise {"detail": "Федерация не может создавать команду"}
@@ -32,16 +32,22 @@ async def api_create_command(team_data: SCreateTeam, current_user: Users = Depen
         users_id_list = team_data.users_id_list
     )
 
-@router.get("/detail/{team_id}")
+@router.get("/detail/{team_id}", description="Детализация команды по id")
 async def api_team_detail(team_id: int):
     return await TeamsDAO.detail(team_id=team_id)
 
-
-@router.post("/edit-status")
+@router.post("/edit-status", description="Изменение статуса заявки команды c Требуются спортсмены на Заполнена")
 async def api_edit_status(edit_data: SEditStatus, current_user: Users = Depends(get_current_user)):
-    # Изменение статуса команда на сформированная
     return await edit_status(edit_data.team_id, current_user.id)
 
-# Список команд со статусом NEED_PLAYERS = "Требуются спортсмены"
-# Список для спортсмена со всеми приглашениями в команду
-# Список для капитана команды с users_in_teams со статусом "Ожидание капитана"
+@router.get("/my-team", description="Получение списка команд для текущего пользователя")
+async def api_my_team(current_user: Users = Depends(get_current_user)):
+    return await TeamsDAO.my_team(current_user.id)
+
+@router.get("/need-players/{competition_id}", description="Cписок команд которым нужны участники")
+async def api_need_players(competition_id: int):
+    return await TeamsDAO.need_players(competition_id)
+
+@router.get("/applications-to-captain/{team_id}", description="Cписок заявок в команду (для капитана)")
+async def api_applications_to_captain(team_id: int, current_user: Users = Depends(get_current_user)):
+    return await TeamsDAO.applications_to_captain(current_user.id, team_id)
