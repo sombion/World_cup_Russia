@@ -1,4 +1,5 @@
 
+from backend.exceptions import AlreadyAppliedToTeamError, ApplicationNotFoundError, InvalidApplicationStatusError, TeamNotFoundError
 from backend.teams.dao import TeamsDAO
 from backend.teams.models import TeamStatus
 from backend.users_in_teams.dao import UserInTeamDAO
@@ -11,9 +12,9 @@ async def check_users_in_teams(users_in_teams_id: int, user_id: int, status: Use
         user_id = user_id
     )
     if not user_in_team_data:
-        raise {"detail": "Заявка не найдена"}
+        raise ApplicationNotFoundError
     if user_in_team_data.status != status:
-        raise {"detail": "Неверный статус заявки"}
+        raise InvalidApplicationStatusError
 
 async def accept_user(users_in_teams_id: int, user_id: int):
     # Вступление в команду по приглашению accept_data.users_in_teams_id и current_user.id
@@ -29,9 +30,9 @@ async def invite_to_captain(team_id: int, comment: str | None, user_id: int):
     # Вступление в команду invite_data.team_id invite_data.comment и current_user.id
     team_data = await TeamsDAO.find_one_or_none(id=team_id, status=TeamStatus.NEED_PLAYERS)
     if not team_data:
-        raise {"detail": "Команда не найдена"}
+        raise TeamNotFoundError
     if UserInTeamDAO.find_one_or_none(user_id=user_id, team_id=team_id):
-        raise {"detail": "Вы уже отправили заявку в данную команду"}
+        raise AlreadyAppliedToTeamError
     await UserInTeamDAO.add(
         user_id=user_id,
         team_id=team_id,

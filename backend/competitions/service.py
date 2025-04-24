@@ -2,6 +2,7 @@ from datetime import datetime
 
 from backend.competitions.dao import CompetitionsDAO
 from backend.competitions.models import Competitions, CompetitionsDiscipline, CompetitionsType
+from backend.exceptions import CompetitionAlreadyPublishedException, CompetitionCreationError, NotAnOrganizerException
 from backend.region.dao import LimitationRegionDAO, UsersRegionDAO
 
 
@@ -29,7 +30,7 @@ async def create_competitions(
         is_published = is_published
     )
     if not competition_id:
-        raise {"detail": "Ошибка создания соревнования"}
+        raise CompetitionCreationError
     if type == CompetitionsType.REGIONAL:
         region_data_user = await UsersRegionDAO.find_one_or_none(user_id=creator_id)
         if region_data_user:
@@ -45,8 +46,8 @@ async def create_competitions(
 async def published(competitions_id: int, user_id: int):
     competitions_data: Competitions = await CompetitionsDAO.find_by_id()
     if competitions_data.creator_id != user_id:
-        raise {"detail": "Вы не являетесь организатором"}
+        raise NotAnOrganizerException
     if competitions_data.is_published == True:
-        raise {"detail": "Соревнование уже опубликовано"}
+        raise CompetitionAlreadyPublishedException
     await CompetitionsDAO.published(id=competitions_id)
     return {"detail": "Соревнование успешно опубликовано"}

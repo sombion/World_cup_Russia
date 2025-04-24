@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 
 from backend.auth.dependencies import get_current_user
 from backend.auth.models import UserRole, Users
+from backend.exceptions import FederationCannotCreateTeamException
 from backend.team_request.models import TeamRequest
 from backend.teams.dao import TeamsDAO
 from backend.teams.schemas import SCreateTeam, SEditStatus
@@ -16,7 +17,7 @@ router = APIRouter(
 @router.post("/create", description="Создание команды")
 async def api_create_command(team_data: SCreateTeam, current_user: Users = Depends(get_current_user)):
     if current_user.role == UserRole.FEDERATION:
-        raise {"detail": "Федерация не может создавать команду"}
+        raise FederationCannotCreateTeamException
     captain_id = current_user.id
     pepresentative_id = None
     if team_data.captain_id:

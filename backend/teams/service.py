@@ -1,3 +1,4 @@
+from backend.exceptions import AlreadyRegisteredAsCaptainException, ParticipantsAlreadyInCompetitionException, TeamCreationError, TeamStatusChangeError
 from backend.team_request.dao import TeamRequestDAO
 from backend.team_request.models import TeamRequestStatus
 from backend.team_request.service import send_team_request
@@ -18,7 +19,7 @@ async def create_team(
 ):
     # Проверка, что в этом соревновании уже нет команды с данным лидером и участниками
     if await TeamsDAO.find_one_or_none(competitions_id=competitions_id, captain_id=captain_id):
-        raise {"detail": "Вы уже зарегистрировались в качестве капитана команды в данном соревновании"}
+        raise AlreadyRegisteredAsCaptainException
     black_list = []
     for user_id in users_id_list:
         if await TeamsDAO.find_one_or_none(competitions_id=competitions_id, captain_id=user_id):
@@ -27,7 +28,7 @@ async def create_team(
         if team_user:
             black_list.append(user_id)
     if black_list:
-        raise {"detail": "Участники уже учавствуют в данном соревновании"}
+        raise ParticipantsAlreadyInCompetitionException
     # Создание команды с капитаном
     team_id = await TeamsDAO.add(
         name = name,
@@ -38,7 +39,7 @@ async def create_team(
         status = status,
     )
     if not team_id:
-        raise {"detail": "Ошибка создания команды"}
+        raise TeamCreationError
     for user_id in users_id_list:
         await UserInTeamDAO.add(
             user_id=user_id,
@@ -53,7 +54,7 @@ async def create_team(
 async def edit_status(team_id: int, user_id: int):
     team_data = await TeamsDAO.find_by_id(team_id)
     if team_data.status == TeamStatus.FILLED:
-        raise {"detail": "Невозможно изменить статус"}
+        raise TeamStatusChangeError
     await TeamsDAO.edit_status(team_id=team_id, status=TeamStatus.FILLED)
     await TeamRequestDAO.edit_status(
         competitions_id=team_data.competitions_id,
