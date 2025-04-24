@@ -1,24 +1,308 @@
 # World_cup_Russia
+# Документация API
 
-| Метод  | Эндпоинт                                   | Описание                   |
-|--------|--------------------------------------------|----------------------------|
-| GET    | /api/auth/me                               | Api Get Me                 |
-| POST   | /api/auth/register                         | Api Register User          |
-| POST   | /api/auth/login                            | Api Auth User              |
-| POST   | /api/auth/logout                           | Api Logout User            |
-| GET    | /api/region/all                            | Api All Region             |
-| POST   | /api/region/add                            | Api Add Region             |
-| GET    | /api/competitions/detail/{competitions_id} | Api Detail Competitions    |
-| GET    | /api/competitions/all                      | Api All Competitions       |
-| GET    | /api/competitions/find-my-published         | Api Filter My Published    |
-| GET    | /api/competitions/find-my-not-published     | Api Filter My Not Published|
-| POST   | /api/competitions/create                   | Api Create Competitions    |
-| POST   | /api/competitions/published                | Api Published Competitions |
-| POST   | /api/team/create                           | Api Create Command         |
-| GET    | /api/team/detail/{team_id}                 | Api Team Detail            |
-| POST   | /api/team/accept-users                     | Api Accept User            |
-| POST   | /api/team/invite-to-captain                | Api Invite User            |
-| POST   | /api/team/accept-captain-to-users          | Api Accept Captain To User |
-| POST   | /api/team/reject-captain-to-users          | Api Reject Captain To Users|
-| POST   | /api/team/edit-status                      | Api Edit Status            |
-| POST   | /api/team/send-team-request                | Api Send Team Request      |
+Этот документ описывает доступные API-эндпоинты проекта согласно спецификации OpenAPI.
+
+## 1. Авторизация
+
+### GET /api/auth/me
+- **Теги:** Авторизация
+- **Summary:** Api Get Me
+- **Описание:** Просмотр данных о текущем пользователе
+
+### POST /api/auth/register
+- **Теги:** Авторизация
+- **Summary:** Api Register User
+- **Описание:** Регистрация
+- **Тело запроса:** Требуется объект, соответствующий схеме `SUserRegister`
+- **Ответы:**
+  - `200`: Успешный ответ с объектом результата
+  - `422`: Ошибка валидации
+
+### POST /api/auth/login
+- **Теги:** Авторизация
+- **Summary:** Api Auth User
+- **Описание:** Авторизация
+- **Тело запроса:** Требуется объект, соответствующий схеме `SUserAuth`
+- **Ответы:**
+  - `200`: Успешный ответ с объектом результата
+  - `422`: Ошибка валидации
+
+### POST /api/auth/logout
+- **Теги:** Авторизация
+- **Summary:** Api Logout User
+- **Описание:** Выход из записи
+- **Ответ:**
+  - `200`: Успешный ответ с объектом результата
+
+### GET /api/auth/complited-competitions
+- **Теги:** Авторизация
+- **Summary:** Api Complited Competitions
+- **Описание:** Завершенные соревнования
+- **Ответ:**
+  - `200`: Успешный ответ с данными завершённых соревнований
+
+### GET /api/auth/now-competitions
+- **Теги:** Авторизация
+- **Summary:** Api Now Competitions
+- **Описание:** Текущие соревнования
+- **Ответ:**
+  - `200`: Успешный ответ с данными текущих соревнований
+
+## 2. API работы с регионами
+
+### GET /api/region/all
+- **Теги:** API работы с регионами
+- **Summary:** Api All Region
+- **Описание:** Список всех регионов
+- **Ответ:**
+  - `200`: Успешный ответ со списком регионов
+
+### POST /api/region/add
+- **Теги:** API работы с регионами
+- **Summary:** Api Add Region
+- **Описание:** Создание региона
+- **Тело запроса:** Требуется объект, соответствующий схеме `SCreaetRegion`
+- **Ответы:**
+  - `200`: Успешный ответ с объектом результата
+  - `422`: Ошибка валидации
+
+## 3. API работы с соревнованиями
+
+### GET /api/competitions/detail/{competitions_id}
+- **Теги:** API работы с соревнованиями
+- **Summary:** Api Detail Competitions
+- **Описание:** Информация о соревновании
+- **Параметры пути:**
+  - `competitions_id` (integer, обязательный): Идентификатор соревнования
+- **Ответы:**
+  - `200`: Успешный ответ с информацией о соревновании
+  - `422`: Ошибка валидации
+
+### GET /api/competitions/all
+- **Теги:** API работы с соревнованиями
+- **Summary:** Api All Competitions
+- **Описание:** Все соревнования
+- **Ответ:**
+  - `200`: Успешный ответ со списком всех соревнований
+
+### GET /api/competitions/filter
+- **Теги:** API работы с соревнованиями
+- **Summary:** Api Filter Competitions
+- **Описание:** Фильтр соревнований
+- **Параметры запроса (необязательные):**
+  - `date_start` (string, формат: date | null): Дата начала
+  - `type` (enum | null): Тип соревнования (`CompetitionsType`)
+  - `discipline` (enum | null): Дисциплина (`CompetitionsDiscipline`)
+  - `region_id` (integer | null): Id региона
+- **Ответы:**
+  - `200`: Успешный ответ с отфильтрованными соревнованиями
+  - `422`: Ошибка валидации
+
+### GET /api/competitions/find-my-published
+- **Теги:** API работы с соревнованиями
+- **Summary:** Api Filter My Published
+- **Описание:** Опубликованные соревнования пользователя
+- **Ответ:**
+  - `200`: Успешный ответ со списком опубликованных соревнований
+
+### GET /api/competitions/find-my-not-published
+- **Теги:** API работы с соревнованиями
+- **Summary:** Api Filter My Not Published
+- **Описание:** Неопубликованные соревнования пользователя
+- **Ответ:**
+  - `200`: Успешный ответ со списком неопубликованных соревнований
+
+### POST /api/competitions/create
+- **Теги:** API работы с соревнованиями
+- **Summary:** Api Create Competitions
+- **Описание:** Создание нового соревнования
+- **Тело запроса:** Объект по схеме `SCreateCompetitions`
+- **Ответы:**
+  - `200`: Успешный ответ
+  - `422`: Ошибка валидации
+
+### POST /api/competitions/published
+- **Теги:** API работы с соревнованиями
+- **Summary:** Api Published Competitions
+- **Описание:** Публикация соревнования
+- **Тело запроса:** Объект по схеме `SPublishedCompetitions`
+- **Ответы:**
+  - `200`: Успешный ответ
+  - `422`: Ошибка валидации
+
+## 4. API комманды
+
+### POST /api/team/create
+- **Теги:** API комманды
+- **Summary:** Api Create Command
+- **Описание:** Создание команды
+- **Тело запроса:** Объект по схеме `SCreateTeam`
+- **Ответы:**
+  - `200`: Успешный ответ
+  - `422`: Ошибка валидации
+
+### GET /api/team/detail/{team_id}
+- **Теги:** API команды
+- **Summary:** Api Team Detail
+- **Описание:** Получение информации о команде по её ID
+- **Параметры:**
+  - `team_id` (integer, path): Идентификатор команды
+- **Ответы:**
+  - `200`: Успешный ответ с деталями команды
+  - `422`: Ошибка валидации
+
+### POST /api/team/edit-status
+- **Теги:** API команды
+- **Summary:** Api Edit Status
+- **Описание:** Изменение статуса команды с "Требуются спортсмены" на "Заполнена"
+- **Тело запроса:** Объект по схеме `SEditStatus`
+- **Ответы:**
+  - `200`: Успешное изменение
+  - `422`: Ошибка валидации
+
+### GET /api/team/my-team
+- **Теги:** API команды
+- **Summary:** Api My Team
+- **Описание:** Получение списка команд текущего пользователя
+- **Ответ:**
+  - `200`: Успешный ответ со списком команд
+
+### GET /api/team/need-players/{competition_id}
+- **Теги:** API команды
+- **Summary:** Api Need Players
+- **Описание:** Список команд, которым требуются участники, по ID соревнования
+- **Параметры:**
+  - `competition_id` (integer, path): Идентификатор соревнования
+- **Ответы:**
+  - `200`: Успешный ответ
+  - `422`: Ошибка валидации
+
+### GET /api/team/applications-to-captain/{team_id}
+- **Теги:** API команды
+- **Summary:** Api Applications To Captain
+- **Описание:** Список заявок в команду (доступно капитану)
+- **Параметры:**
+  - `team_id` (integer, path): Идентификатор команды
+- **Ответы:**
+  - `200`: Успешный ответ
+  - `422`: Ошибка валидации
+
+## 5. API заявок в команду
+
+### POST /api/user-in-teams/accept-users
+- **Теги:** API заявок в команду
+- **Summary:** Api Accept User
+- **Описание:** Пользователь вступает в команду по приглашению
+- **Тело запроса:** Объект по схеме `SAcceptUsers`
+- **Ответы:**
+  - `200`: Успешный ответ
+  - `422`: Ошибка валидации
+
+### POST /api/user-in-teams/invite-to-captain
+- **Теги:** API заявок в команду
+- **Summary:** Api Invite To Captain
+- **Описание:** Отправка заявки пользователем на вступление в команду
+- **Тело запроса:** Объект по схеме `SInviteUsers`
+- **Ответы:**
+  - `200`: Успешный ответ
+  - `422`: Ошибка валидации
+
+### POST /api/user-in-teams/accept-captain-to-users
+- **Теги:** API заявок в команду
+- **Summary:** Api Accept Captain To User
+- **Описание:** Принятие заявки капитаном пользователя в команду
+- **Тело запроса:** Объект по схеме `SInviteUsers`
+- **Ответы:**
+  - `200`: Успешный ответ
+  - `422`: Ошибка валидации
+
+### POST /api/user-in-teams/accept-captain-to-users
+- **Summary:** Api Accept Captain To User
+- **Описание:** Принятие заявки капитаном, чтобы участник присоединился к команде
+- **Тело запроса:** Объект `SAcceptToCaptain`
+- **Ответы:**
+  - `200`: Успешный ответ
+  - `422`: Ошибка валидации
+
+### POST /api/user-in-teams/reject-captain-to-users
+- **Summary:** Api Reject Captain To Users
+- **Описание:** Отклонение капитаном заявки участника на вступление в команду
+- **Тело запроса:** Объект `SAcceptToCaptain`
+- **Ответы:**
+  - `200`: Успешный ответ
+  - `422`: Ошибка валидации
+
+### GET /api/user-in-teams/all-invite-in-team
+- **Summary:** All Invite In Team
+- **Описание:** Список заявок в команду, доступный капитану
+- **Ответ:**
+  - `200`: Успешный ответ
+
+## 6. API заявок с соревнованиями
+
+### POST /api/team-request/send-moderator
+- **Summary:** Api Send Team Request
+- **Описание:** Отправка заявки команды на модерацию для участия в соревновании
+- **Тело запроса:** Объект `SSendModeretor`
+- **Ответы:**
+  - `200`: Успешный ответ
+  - `422`: Ошибка валидации
+
+### GET /api/team-request/competitions/{competitions_id}
+- **Summary:** Request Competitions
+- **Описание:** Получение списка заявок на участие в определённом соревновании
+- **Параметры:**
+  - `competitions_id` (integer, path): ID соревнования
+- **Ответы:**
+  - `200`: Успешный ответ
+  - `422`: Ошибка валидации
+
+### GET /api/team-request/moderation/competitions/{competitions_id}
+- **Summary:** Request Competitions (на модерации)
+- **Описание:** Список заявок, находящихся на модерации, по ID соревнования
+- **Параметры:**
+  - `competitions_id` (integer, path): ID соревнования
+- **Ответы:**
+  - `200`: Успешный ответ
+  - `422`: Ошибка валидации
+
+### GET /api/team-request/approved/competitions/{competitions_id}
+- **Summary:** Request Competitions (одобренные)
+- **Описание:** Список подтвержденных заявок для конкретного соревнования
+- **Параметры:**
+  - `competitions_id` (integer, path): ID соревнования
+- **Ответы:**
+  - `200`: Успешный ответ
+  - `422`: Ошибка валидации
+
+### GET /api/team-request/modetation-team-list
+- **Summary:** Api Moderation Team List
+- **Описание:** Получение списка команд, находящихся на модерации
+- **Ответ:**
+  - `200`: Успешный ответ
+
+### POST /api/team-request/moderation/accept-team-request
+- **Summary:** Accept
+- **Описание:** Подтверждение заявки на участие в соревновании на этапе модерации
+- **Тело запроса:** Объект `SModerationCompetitions`
+- **Ответы:**
+  - `200`: Успешный ответ
+  - `422`: Ошибка валидации
+
+### POST /api/team-request/moderation/reject-team-request
+- **Summary:** Reject
+- **Описание:** Отклонение заявки на участие в соревновании на этапе модерации
+- **Тело запроса:** Объект `SModerationCompetitions`
+- **Ответы:**
+  - `200`: Успешный ответ
+  - `422`: Ошибка валидации
+
+### POST /api/team-request/end-competition
+- **Summary:** Api End Competition
+- **Описание:** Завершение соревнования и выставление результатов для команды
+- **Тело запроса:** Объект `SEndCompetition`
+- **Ответы:**
+  - `200`: Успешный ответ
+  - `422`: Ошибка валидации
+
