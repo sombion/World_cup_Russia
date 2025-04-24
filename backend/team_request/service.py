@@ -1,15 +1,17 @@
 from backend.competitions.dao import CompetitionsDAO
+from backend.region.dao import LimitationRegionDAO
 from backend.team_request.dao import TeamRequestDAO
 from backend.team_request.models import TeamRequestStatus
 from backend.teams.dao import TeamsDAO
 from backend.users_in_teams.dao import UserInTeamDAO
 
 
-async def send_team_request(team_id: int, status: TeamRequestStatus):
-    team_data = await TeamsDAO.find_one_or_none(id=team_id)
-    competitions_id = team_data.competitions_id
+async def send_team_request(team_id: int, competitions_id: int, status: TeamRequestStatus):
     competitions_data = await CompetitionsDAO.find_one_or_none(id=competitions_id)
-
+    if not competitions_data:
+        raise {"detail": "Соревнование не найдено"}
+    if not await TeamsDAO.find_by_id(model_id=team_id):
+        raise {"detail": "Команда не найдена"}
     if await TeamRequestDAO.find_one_or_none(competitions_id=competitions_id, teams_id=team_id):
         raise {"detail": "Заявка уже отправлена"}
     # Получение списка age для всех пользователь
@@ -22,16 +24,16 @@ async def send_team_request(team_id: int, status: TeamRequestStatus):
             comment="Не подходящий возраст"
         )
         return {"detail": "Заявка отклонена"}
-    # Получение списка региона_id для всех пользователь
-    # region_id_list = list(set())
-    # available = []
-    # if available:
-    #     await TeamRequestDAO.add(
-    #         competitions_id=competitions_data,
-    #         teams_id=team_id,
-    #         status=TeamRequestStatus.REJECTED,
-    #         comment="Не подходящий регион"
-    #     )
-    #     return {"detail": "Заявка отклонена"}
-    await TeamRequestDAO.add(competitions_id=competitions_id, teams_id=team_id, status=status)
+    region_id_list_dict = await LimitationRegionDAO.list_region_in_competitions(competitions_id=competitions_id)
+    region_id_list_competition = [item["id"] for item in region_id_list_dict]
+    region_id_list_command = await TeamsDAO.find_list_region_command(team_id=team_id)
+    is_all_regions_valid = all(region_id in region_id_list_competition for region_id in region_id_list_command)
+    if not is_all_regions_valid:
+        raise {"detail": "Команда содержит участников из недопустимых регионов"}
+    await TeamRequestDAO.add(
+        competitions_id=competitions_id,
+        teams_id=team_id,
+        status=status,
+        comment=None
+    )
     return {"detail": "Заявка отправлена на модерацию"}

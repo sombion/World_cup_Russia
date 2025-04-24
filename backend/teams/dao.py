@@ -1,6 +1,7 @@
 from sqlalchemy import case, func, insert, select, union, update
 from sqlalchemy.orm import aliased
 from backend.auth.models import Users
+from backend.region.models import UsersRegion
 from backend.teams.models import TeamStatus, Teams
 from backend.dao.base import BaseDAO
 from backend.database import async_session_maker
@@ -75,3 +76,20 @@ class TeamsDAO(BaseDAO):
             )
             result = await session.execute(query)
             return result.first()._mapping
+
+    @classmethod
+    async def find_list_region_command(cls, team_id: int):
+        async with async_session_maker() as session:
+            team_query = select(Teams).where(Teams.id == team_id)
+            team_result = await session.execute(team_query)
+            team = team_result.scalar_one_or_none()
+            if not team:
+                return []
+            user_ids = [team.captain_id]
+            if team.pepresentative_id:
+                user_ids.append(team.pepresentative_id)
+            region_query = select(UsersRegion.region_id).where(UsersRegion.user_id.in_(user_ids))
+            region_result = await session.execute(region_query)
+            region_ids = [row.region_id for row in region_result.fetchall()]
+
+            return region_ids

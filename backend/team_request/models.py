@@ -19,5 +19,5 @@ class TeamRequest(Base):
     teams_id: Mapped[int] = mapped_column(ForeignKey("teams.id"))
     place: Mapped[int] = mapped_column(nullable=True)
     points: Mapped[int] = mapped_column(nullable=True)
-    сomment: Mapped[str] = mapped_column(nullable=True)
+    comment: Mapped[str] = mapped_column(nullable=True)
     status: Mapped[TeamRequestStatus] = mapped_column(Enum(TeamRequestStatus, native_enum=False))

@@ -1,8 +1,11 @@
-from fastapi import APIRouter, Depends
+from datetime import date
+from typing import Optional
+from fastapi import APIRouter, Depends, Query
 
 from backend.auth.dependencies import get_current_federation_user, get_current_user
 from backend.auth.models import Users
 from backend.competitions.dao import CompetitionsDAO
+from backend.competitions.models import CompetitionsDiscipline, CompetitionsType
 from backend.competitions.schemas import SCreateCompetitions, SPublishedCompetitions
 from backend.competitions.service import create_competitions, published
 
@@ -19,7 +22,21 @@ async def api_detail_competitions(competitions_id: int):
 
 @router.get("/all")
 async def api_all_competitions():
-    ...
+    return await CompetitionsDAO.find_all()
+
+@router.get("/filter")
+async def api_filter_competitions(
+    date_start: Optional[date] = Query(None, description="Дата начала"),
+    type: Optional[CompetitionsType] = Query(None, description="Тип соревнования"),
+    discipline: Optional[CompetitionsDiscipline] = Query(None, description="Дисциплина"),
+    region_id: Optional[int] = Query(None, description="Id региона")
+):
+    return await CompetitionsDAO.filter(
+        date_start=date_start,
+        type=type,
+        discipline=discipline,
+        region_id=region_id
+    )
 
 @router.get("/find-my-published")
 async def api_filter_my_published(current_user: Users = Depends(get_current_user)):

@@ -30,6 +30,19 @@ class LimitationRegionDAO(BaseDAO):
             await session.commit()
             return result.scalar()
 
+    @classmethod
+    async def list_region_in_competitions(cls, competitions_id: int):
+        async with async_session_maker() as session:
+            query = (
+                select(Region.id)
+                .select_from(cls.model)
+                .join(Region, cls.model.region_id==Region.id)
+                .where(cls.model.competitions_id==competitions_id)
+                .group_by(Region.id)
+            )
+            result = await session.execute(query)
+            return result.mappings().all()
+
 class UsersRegionDAO(BaseDAO):
     model = UsersRegion
 
