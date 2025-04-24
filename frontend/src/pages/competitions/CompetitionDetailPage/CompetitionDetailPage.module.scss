@@ -1,0 +1,148 @@
+.competitionDetailContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  
+    .loading, .error, .notFound {
+      text-align: center;
+      padding: 40px;
+      font-size: 18px;
+    }
+  
+    .error {
+      color: #d32f2f;
+    }
+  
+    .teamsSection {
+      margin: 30px 0;
+  
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+      }
+    }
+  
+    .teamsList {
+      list-style: none;
+      padding: 0;
+      display: grid;
+      gap: 15px;
+    }
+  
+    .teamItem {
+      background-color: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  
+      .teamHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+  
+        h3 {
+          margin: 0;
+          color: #2c3e50;
+        }
+  
+        .teamStatus {
+          background-color: #e3f2fd;
+          color: #1976d2;
+          padding: 4px 10px;
+          border-radius: 12px;
+          font-size: 0.8em;
+          font-weight: 500;
+        }
+      }
+  
+      .teamCaptain {
+        color: #666;
+        margin: 5px 0;
+        font-size: 0.9em;
+      }
+  
+      .teamDescription {
+        color: #555;
+        margin: 10px 0;
+        font-size: 0.95em;
+      }
+  
+      .teamMembers {
+        margin-top: 15px;
+  
+        h4 {
+          margin: 0 0 10px 0;
+          font-size: 1em;
+          color: #555;
+        }
+      }
+  
+      .membersList {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 8px;
+      }
+  
+      .memberItem {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 10px;
+        background-color: #fafafa;
+        border-radius: 4px;
+  
+        .memberInfo {
+          .userName {
+            font-weight: 500;
+          }
+  
+          .userLogin {
+            font-size: 0.8em;
+            color: #777;
+          }
+        }
+  
+        .memberStatus {
+          font-size: 0.8em;
+          padding: 3px 8px;
+          border-radius: 12px;
+          font-weight: 500;
+  
+          &.invited {
+            background-color: #fff3e0;
+            color: #e65100;
+          }
+  
+          &.accepted {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+          }
+  
+          &.rejected {
+            background-color: #ffebee;
+            color: #c62828;
+          }
+        }
+      }
+  
+      .joinButton {
+        margin-top: 15px;
+        width: 100%;
+      }
+    }
+  
+    .actionsSection {
+      margin-top: 30px;
+      display: flex;
+      gap: 15px;
+  
+      button {
+        flex: 1;
+        max-width: 300px;
+      }
+    }
+  }
