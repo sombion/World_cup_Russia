@@ -2,6 +2,7 @@ from sqlalchemy import insert, select, update
 from backend.dao.base import BaseDAO
 from backend.database import async_session_maker
 from backend.team_request.models import TeamRequest, TeamRequestStatus
+from backend.teams.models import Teams
 
 
 class TeamRequestDAO(BaseDAO):
@@ -26,6 +27,43 @@ class TeamRequestDAO(BaseDAO):
             await session.commit()
 
     @classmethod
+    async def find_competitions_request(cls, competitions_id: int):
+        async with async_session_maker() as session:
+            query = (
+                select(cls.model.__table__.columns, Teams.name)
+                .outerjoin(Teams, cls.model.teams_id==Teams.id)
+                .where(cls.model.competitions_id==competitions_id)
+            )
+            result = await session.execute(query)
+            return result.mappings().all()
+
+    @classmethod
+    async def find_competitions_request_status(cls, competitions_id: int, status: TeamRequestStatus):
+        async with async_session_maker() as session:
+            query = (
+                select(cls.model.__table__.columns, Teams.name)
+                .outerjoin(Teams, cls.model.teams_id==Teams.id)
+                .where(
+                    cls.model.competitions_id==competitions_id,
+                    cls.model.status==status
+                )
+            )
+            result = await session.execute(query)
+            return result.mappings().all()
+
+    @classmethod
+    async def end_competition(cls, team_request_id: int, place: int, points: int):
+        async with async_session_maker() as session:
+            stmt = update(cls.model).where(cls.model.id==team_request_id).values(
+                place=place,
+                points=points,
+                status=TeamRequestStatus.COMPLETED
+            )
+            result = await session.execute(stmt)
+            await session.commit()
+            return result.scalar()
+
+    @classmethod
     async def edit_status(cls, competitions_id: int, teams_id: int, status: TeamRequestStatus):
         async with async_session_maker() as session:
             stmt = (
@@ -36,3 +74,5 @@ class TeamRequestDAO(BaseDAO):
             )
             await session.execute(stmt)
             await session.commit()
+
+    
